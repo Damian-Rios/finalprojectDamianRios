@@ -9,8 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+# Pokemon TCG API details
+POKEMON_TCG_API_BASE_URL = "https://api.pokemontcg.io/v2"
+POKEMON_TCG_API_KEY = os.environ.get("POKEMON_TCG_API_KEY")
+
+# Check if the API key is available
+if not POKEMON_TCG_API_KEY:
+    raise ValueError("POKEMON_TCG_API_KEY environment variable not set")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
