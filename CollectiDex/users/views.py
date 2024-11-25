@@ -9,6 +9,12 @@ from django.contrib.auth import authenticate, login, logout
 
 
 # Create your views here.
+def index(request):
+    #if request.user.is_authenticated:
+    # return redirect('portfolio')
+    return render(request, 'users/index.html')
+
+
 def register_view(request):
     form = CreateUserForm()
 
@@ -37,7 +43,7 @@ def login_view(request):
 
             if user is not None:
                 auth.login(request, user)
-                return redirect('dashboard')
+                return redirect('index')
 
     context = {'loginForm': form}
     return render(request, 'users/login.html', context=context)

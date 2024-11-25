@@ -2,5 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('pokemon-cards/', views.pokemon_card_list, name='pokemon_card_list'),
+    path('', views.card_list, name='card_list'),
+    path('search/', views.search_cards, name='search_cards'),
+    path('filter/', views.filter_cards, name='filter_cards'),
 ]

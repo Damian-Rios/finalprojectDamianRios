@@ -2,19 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Cards</title>
 </head>
 <body>
-    <h1>Pokémon Cards</h1>
-    <ul>
+
+    <!-- Search Bar -->
+    <div id="search-container">
+        <form action="{% url 'search_cards' %}" method="get">
+            <input type="text" name="q" id="search-bar" placeholder="Search for a Pokémon" value="{{ query }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Filter Button -->
+    <button id="filter-button" onclick="document.getElementById('filter-modal').style.display='block'">Filters</button>
+
+    <!-- Filter Modal -->
+    <div id="filter-modal" style="display:none;">
+        <div id="filter-content">
+            <h2>Filter Cards</h2>
+            <form action="{% url 'filter_cards' %}" method="get">
+
+                <!-- Types Filter (Multiselect) -->
+                <label for="types">Types</label><br>
+                <select name="types" id="types" multiple>
+                    <option value="Fire" {% if 'Fire' in filters %}selected{% endif %}>Fire</option>
+                    <option value="Water" {% if 'Water' in filters %}selected{% endif %}>Water</option>
+                    <option value="Electric" {% if 'Lightning' in filters %}selected{% endif %}>Lightning</option>
+                    <option value="Grass" {% if 'Grass' in filters %}selected{% endif %}>Grass</option>
+                    <option value="Dragon" {% if 'Dragon' in filters %}selected{% endif %}>Dragon</option>
+                    <option value="Lightning" {% if 'Lightning' in filters %}selected{% endif %}>Lightning</option>
+                    <option value="Fairy" {% if 'Fairy' in filters %}selected{% endif %}>Fairy</option>
+                    <option value="Metal" {% if 'Metal' in filters %}selected{% endif %}>Metal</option>
+                    <option value="Fighting" {% if 'Fighting' in filters %}selected{% endif %}>Fighting</option>
+                    <option value="Psychic" {% if 'Psychic' in filters %}selected{% endif %}>Psychic</option>
+                    <option value="Colorless" {% if 'Colorless' in filters %}selected{% endif %}>Colorless</option>
+                    <option value="Darkness" {% if 'Darkness' in filters %}selected{% endif %}>Darkness</option>
+                </select>
+
+                <!-- Supertype Filter (Radio buttons) -->
+                <label for="supertype">Supertype</label><br>
+                <input type="radio" name="supertype" value="pokemon" {% if supertype == 'pokemon' %}checked{% endif %}> Pokémon
+                <input type="radio" name="supertype" value="trainer" {% if supertype == 'trainer' %}checked{% endif %}> Trainer
+
+                <!-- Rarity Filter (Dropdown) -->
+                <label for="rarity">Rarity</label><br>
+                <select name="rarity">
+                    <option value="common" {% if rarity == 'common' %}selected{% endif %}>Common</option>
+                    <option value="rare" {% if rarity == 'rare' %}selected{% endif %}>Rare</option>
+                    <option value="ultrarare" {% if rarity == 'ultrarare' %}selected{% endif %}>Ultra Rare</option>
+                </select>
+
+                <button type="submit">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Card List -->
+    <div id="card-list">
         {% for card in cards %}
-            <li>
-                <strong>{{ card.name }}</strong> - {{ card.set.name }}
+            <div class="card">
+                <h3>{{ card.name }}</h3>
+                <p>Supertype: {{ card.supertype }}</p>
+                <p>Rarity: {{ card.rarity }}</p>
                 <img src="{{ card.images.small }}" alt="{{ card.name }}">
-            </li>
+            </div>
         {% empty %}
-            <li>No cards found.</li>
+            <p>No Pokémon found for your search/filter.</p>
         {% endfor %}
-    </ul>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination">
+        {% if page > 1 %}
+            <a href="?page={{ page|add:-1 }}{% if query %}&q={{ query }}{% endif %}{% if filters %}&types={{ filters|join:',' }}{% endif %}">Previous</a>
+        {% endif %}
+        <span>Page {{ page }}</span>
+        <a href="?page={{ page|add:1 }}{% if query %}&q={{ query }}{% endif %}{% if filters %}&types={{ filters|join:',' }}{% endif %}">Next</a>
+    </div>
+
 </body>
 </html>

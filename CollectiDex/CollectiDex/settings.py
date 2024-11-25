@@ -10,11 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+from email.policy import default
 from pathlib import Path
+from decouple import config
 
 # Pokemon TCG API details
-POKEMON_TCG_API_BASE_URL = "https://api.pokemontcg.io/v2"
-POKEMON_TCG_API_KEY = os.environ.get("POKEMON_TCG_API_KEY")
+POKEMON_TCG_API_BASE_URL = config('POKEMON_TCG_API_BASE_URL', default=None)
+POKEMON_TCG_API_KEY = config('POKEMON_TCG_API_KEY', default=None)
 
 # Check if the API key is available
 if not POKEMON_TCG_API_KEY:
@@ -127,9 +129,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'portfolio'  # Redirects users to portfolio or main dashboard after login
+
