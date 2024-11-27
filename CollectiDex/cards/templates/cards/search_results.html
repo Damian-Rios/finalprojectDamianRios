@@ -1,18 +1,93 @@
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Search</title>
 </head>
 <body>
-    <h1>Search Results for "{{ query }}"</h1>
-    <ul>
-        {% for card in cards %}
-            <li>
-                <strong>{{ card.name }}</strong> - {{ card.rarity }} -
-                <img src="{{ card.images.small }}" alt="{{ card.name }}" />
+    <h1>Card Search</h1>
+
+    <form method="get" action="{% url 'search_cards' %}">
+        {% csrf_token %}
+        <div>
+            <h3>Supertypes</h3>
+
+            <label for="supertype">Supertype:</label>
+            {{ form.supertype }}
+        </div>
+
+        <div>
+            <h3>Subtypes</h3>
+            {{ form.combine_subtypes }}
+
+            <label for="pokemon_subtypes">Pokemon:</label>
+            {{ form.pokemon_subtypes }}
+
+            <label for="trainer_subtypes">Trainer:</label>
+            {{ form.trainer_subtypes }}
+
+            <label for="energy_subtypes">Energy:</label>
+            {{ form.energy_subtypes }}
+        </div>
+
+        <div>
+            <h3>Types</h3>
+
+            <label for="types">Types:</label>
+            {{ form.types }}
+        </div>
+
+        <div>
+            <h3>Rarity</h3>
+
+            <label for="common_rarities">Common Rarities:</label>
+            {{ form.common_rarities }}
+
+            <label for="other_rarities">Other Rarities:</label>
+            {{ form.other_rarities }}
+        </div>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if cards %}
+        <h2>Search Results</h2>
+        <ul>
+            {% for card in cards %}
+                <li>
+                    <strong>{{ card.name }}</strong><br>
+                    Supertype: {{ card.supertype }}<br>
+                    Subtype: {{ card.subtypes }}<br>
+                    Rarity: {{ card.rarity }}<br>
+                    Type: {{ card.types }}<br>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No cards found matching your criteria.</p>
+    {% endif %}
+
+    <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li>
+                    <a href="?{% query_transform page=page|add:-1 %}">Previous</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <a href="javascript:void(0)">{{ page }}</a>
             </li>
-        {% endfor %}
-    </ul>
+
+            <li>
+                <a href="?{% query_transform page=page|add:1 %}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
 </body>
 </html>
