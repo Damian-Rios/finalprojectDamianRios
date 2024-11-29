@@ -1,0 +1,42 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sets List</title>
+</head>
+<body>
+    <h1>Pokémon Sets</h1>
+
+    <ul>
+        {% for set in sets %}
+            <li>
+                <strong>{{ set.name }}</strong><br>
+                Series: {{ set.series }}<br>
+                Release Date: {{ set.releaseDate }}<br>
+                Total Cards: {{ set.total }}<br>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <nav>
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li>
+                    <a href="?{% query_transform page=page|add:-1 %}">Previous</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <a href="javascript:void(0)">{{ page }}</a>
+            </li>
+
+            <li>
+                <a href="?{% query_transform page=page|add:1 %}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+</body>
+</html>

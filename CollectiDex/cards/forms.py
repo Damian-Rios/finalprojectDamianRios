@@ -179,3 +179,5 @@ class CardFilterForm(forms.Form):
         required=False,
         label="Other Rarities"
     )
+
+    name = forms.CharField(required=False)

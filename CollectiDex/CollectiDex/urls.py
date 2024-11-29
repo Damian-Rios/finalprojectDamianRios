@@ -25,4 +25,5 @@ urlpatterns = [
     #path('portfolio/', include('portfolio.urls')),
     #path('sets/', include('sets.urls')),
     path('cards/', include('cards.urls')),
+    path('sets/', include('sets.urls')),
 ]

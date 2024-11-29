@@ -12,6 +12,11 @@
     <form method="get" action="{% url 'search_cards' %}">
         {% csrf_token %}
         <div>
+            <label for="name">Pokemon Name:</label>
+            {{ form.name }}
+        </div>
+
+        <div>
             <h3>Supertypes</h3>
 
             <label for="supertype">Supertype:</label>
@@ -56,17 +61,31 @@
 
     {% if cards %}
         <h2>Search Results</h2>
-        <ul>
             {% for card in cards %}
-                <li>
-                    <strong>{{ card.name }}</strong><br>
+                <div>
+                    <h3>{{ card.name }}</h3>
+                    <img src="{{ card.images.small }}" alt="{{ card.name }}">
                     Supertype: {{ card.supertype }}<br>
                     Subtype: {{ card.subtypes }}<br>
                     Rarity: {{ card.rarity }}<br>
                     Type: {{ card.types }}<br>
-                </li>
+                    Series: {{ card.set.series }}<br>
+                    Set: {{ card.set.name }}<br>
+                    <h4>Prices:</h4>
+                    <ul>
+                        {% for price in card.prices %}
+                            <li>
+                            {{ price.type|title }}:
+                            low: ${{ price.low }},
+                            High: ${{ price.high }},
+                            Market: ${{ price.market }}
+                            </li>
+                        {% empty %}
+                            <p>No price data available.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endfor %}
-        </ul>
     {% else %}
         <p>No cards found matching your criteria.</p>
     {% endif %}
