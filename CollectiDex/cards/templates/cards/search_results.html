@@ -65,19 +65,19 @@
                 <div>
                     <h3>{{ card.name }}</h3>
                     <img src="{{ card.images.small }}" alt="{{ card.name }}">
+                    Id: {{ card.id }}
                     Supertype: {{ card.supertype }}<br>
                     Subtype: {{ card.subtypes }}<br>
                     Rarity: {{ card.rarity }}<br>
                     Type: {{ card.types }}<br>
                     Series: {{ card.set.series }}<br>
                     Set: {{ card.set.name }}<br>
+                    Set Id: {{ card.set.id }}
                     <h4>Prices:</h4>
                     <ul>
                         {% for price in card.prices %}
                             <li>
                             {{ price.type|title }}:
-                            low: ${{ price.low }},
-                            High: ${{ price.high }},
                             Market: ${{ price.market }}
                             </li>
                         {% empty %}
