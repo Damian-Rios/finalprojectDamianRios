@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from . forms import CreateUserForm, LoginForm
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 
 # add to dashboard view when created
 # will need to add @login_required(login_url='login')
@@ -10,8 +11,8 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 def index(request):
-    #if request.user.is_authenticated:
-    # return redirect('portfolio')
+    if request.user.is_authenticated:
+        return redirect(reverse('portfolio:dashboard'))
     return render(request, 'users/index.html')
 
 
@@ -43,7 +44,7 @@ def login_view(request):
 
             if user is not None:
                 auth.login(request, user)
-                return redirect('index')
+                return redirect('portfolio:dashboard')
 
     context = {'loginForm': form}
     return render(request, 'users/login.html', context=context)

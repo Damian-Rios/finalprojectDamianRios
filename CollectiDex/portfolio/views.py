@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+# View for the dashboard
+def dashboard(request):
+    return render(request, 'portfolio/dashboard.html')

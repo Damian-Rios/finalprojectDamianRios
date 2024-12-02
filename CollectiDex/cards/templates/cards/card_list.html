@@ -1,281 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Cards</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load custom_tags %}
+
+{% block title %}Card Search{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Card Search</h1>
 
     <!-- Search Bar -->
-    <div id="search-container">
-        <form action="{% url 'search_cards' %}" method="get">
-            <input type="text" name="q" id="search-bar" placeholder="Search for a Pokémon" value="{{ query }}">
-            <button type="submit">Search</button>
-        </form>
-    </div>
-
-    <!-- Filter Button -->
-    <button id="filter-button" onclick="document.getElementById('filter-modal').style.display='block'">Filters</button>
+    <form method="get" action="{% url 'cards:card_list' %}" class="d-flex mb-3">
+        {% csrf_token %}
+        {{ form.name }}
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <!-- Filter Button -->
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filters</button>
+    </form>
 
     <!-- Filter Modal -->
-<div id="filter-modal">
-    <div id="filter-content">
-        <h2>Filter</h2>
-        <form action="{% url 'filter_cards' %}" method="get">
-
-            <!-- Search Field -->
-            <div>
-                <label for="search">Card Name</label>
-                <input type="text" id="search-bar" name="q" placeholder="Any part of the card name, e.g. “charizard”" value="{{ query }}">
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form method="get" action="{% url 'cards:search_cards' %}">
+                    {% csrf_token %}
 
-            <!-- Supertype Filters -->
-            <div>
-                <h3>Supertype</h3>
-                <label><input type="checkbox" name="supertype" value="Energy" {% if 'Energy' in filters %}checked{% endif %}> Energy</label>
-                <label><input type="checkbox" name="supertype" value="Pokemon" {% if 'Pokemon' in filters %}checked{% endif %}> Pokémon</label>
-                <label><input type="checkbox" name="supertype" value="Trainer" {% if 'Trainer' in filters %}checked{% endif %}> Trainer</label>
+                    <!-- Series Section -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeries" aria-expanded="false" aria-controls="collapseSeries">
+                        Series
+                    </button>
+                    <div class="collapse" id="collapseSeries">
+                        <div class="card card-body">
+                            <label for="series" class="form-label">Series:</label>
+                            {{ form.series }}
+                        </div>
+                    </div>
+
+                    <!-- Scarlet & Violet Sets -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSVSets" aria-expanded="false" aria-controls="collapseSVSets">
+                        Scarlet & Violet Sets
+                    </button>
+                    <div class="collapse" id="collapseSVSets">
+                        <div class="card card-body">
+                            {{ form.scarlet_violet_sets }}
+                        </div>
+                    </div>
+
+                    <!-- Supertypes -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupertypes" aria-expanded="false" aria-controls="collapseSupertypes">
+                        Supertypes
+                    </button>
+                    <div class="collapse" id="collapseSupertypes">
+                        <div class="card card-body">
+                            <label for="supertype" class="form-label">Supertype:</label>
+                            {{ form.supertype }}
+                        </div>
+                    </div>
+
+                    <!-- Subtypes with Nested Dropdowns -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubtypes" aria-expanded="false" aria-controls="collapseSubtypes">
+                        Subtypes
+                    </button>
+                    <div class="collapse" id="collapseSubtypes">
+                        <div class="card card-body">
+                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePokemonSubtypes">
+                                Pokémon Subtypes
+                            </button>
+                            <div class="collapse ps-3" id="collapsePokemonSubtypes">
+                                {{ form.pokemon_subtypes }}
+                            </div>
+
+                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTrainerSubtypes">
+                                Trainer Subtypes
+                            </button>
+                            <div class="collapse ps-3" id="collapseTrainerSubtypes">
+                                {{ form.trainer_subtypes }}
+                            </div>
+
+                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEnergySubtypes">
+                                Energy Subtypes
+                            </button>
+                            <div class="collapse ps-3" id="collapseEnergySubtypes">
+                                {{ form.energy_subtypes }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Types -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTypes" aria-expanded="false" aria-controls="collapseTypes">
+                        Types
+                    </button>
+                    <div class="collapse" id="collapseTypes">
+                        <div class="card card-body">
+                            {{ form.types }}
+                        </div>
+                    </div>
+
+                    <!-- Rarity -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRarity" aria-expanded="false" aria-controls="collapseRarity">
+                        Rarity
+                    </button>
+                    <div class="collapse" id="collapseRarity">
+                        <div class="card card-body">
+                            <label for="common_rarities" class="form-label">Common Rarities:</label>
+                            {{ form.common_rarities }}<br>
+                            <label for="other_rarities" class="form-label">Other Rarities:</label>
+                            {{ form.other_rarities }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
+                </form>
             </div>
-
-            <!-- Rarity Filters -->
-            <div>
-                <h3>Rarity</h3>
-                <select name="Rarity" id="rarity-select" multiple size="10">
-                    <option value="Common" {% if 'Common' in filters %}selected{% endif %}>Common</option>
-                    <option value="Uncommon" {% if 'Uncommon' in filters %}selected{% endif %}>Uncommon</option>
-                    <option value="Rare" {% if 'Rare' in filters %}selected{% endif %}>Rare</option>
-                    <option value="Rare Holo" {% if 'Rare Holo' in filters %}selected{% endif %}>Rare Holo</option>
-                    <option value="Double Rare" {% if 'Double Rare' in filters %}selected{% endif %}>Double Rare</option>
-                    <option value="ACE SPEC Rare" {% if 'ACE SPEC Rare' in filters %}selected{% endif %}>ACE SPEC Rare</option>
-                    <option value="Illustration Rare" {% if 'Illustration Rare' in filters %}selected{% endif %}>Illustration Rare</option>
-                    <option value="Ultra Rare" {% if 'Ultra Rare' in filters %}selected{% endif %}>Ultra Rare</option>
-                    <option value="Shiny Rare" {% if 'Shiny Rare' in filters %}selected{% endif %}>Shiny Rare</option>
-                    <option value="Shiny Ultra Rare" {% if 'Shiny Ultra Rare' in filters %}selected{% endif %}>Shiny Ultra Rare</option>
-                    <option value="Rare Secret" {% if 'Rare Secret' in filters %}selected{% endif %}>Rare Secret</option>
-                    <option value="Special Illustration Rare" {% if 'Special Illustration Rare' in filters %}selected{% endif %}>Special Illustration Rare</option>
-                    <option value="Hyper Rare" {% if 'Hyper Rare' in filters %}selected{% endif %}>Hyper Rare</option>
-                    <option value="Rare Rainbow" {% if 'Rare Rainbow' in filters %}selected{% endif %}>Rare Rainbow</option>
-                    <option value="Radiant Rare" {% if 'Radiant Rare' in filters %}selected{% endif %}>Radiant Rare</option>
-                    <option value="Amazing Rare" {% if 'Amazing Rare' in filters %}selected{% endif %}>Amazing Rare</option>
-                    <option value="Trainer Gallery Rare Holo" {% if 'Trainer Gallery Rare Holo' in filters %}selected{% endif %}>Trainer Gallery Rare Holo</option>
-                    <option value="Promo" {% if 'Promo' in filters %}selected{% endif %}>Promo</option>
-                </select>
-            </div>
-
-            <!-- Subtypes Filter -->
-            <div>
-                <h3>Subtypes</h3>
-                <h4>Pokemon</h4>
-                <select name="Pokemon" id="pokemon-subtypes" multiple size="23">
-                    <option value="Ancient" {% if 'Ancient' in filters %}selected{% endif %}>Ancient</option>
-                    <option value="Fusion Strike" {% if 'Fusion Strike' in filters %}selected{% endif %}>Fusion Strike</option>
-                    <option value="Eternamax" {% if 'Eternamax' in filters %}selected{% endif %}>Eternamax</option>
-                    <option value="Future" {% if 'Future' in filters %}selected{% endif %}>Future</option>
-                    <option value="MEGA" {% if 'MEGA' in filters %}selected{% endif %}>Mega</option>
-                    <option value="BREAK" {% if 'BREAK' in filters %}selected{% endif %}>BREAK</option>
-                    <option value="V-UNION" {% if 'V-UNION' in filters %}selected{% endif %}>V-UNION</option>
-                    <option value="VMAX" {% if 'VMAX' in filters %}selected{% endif %}>VMAX</option>
-                    <option value="VSTAR" {% if 'VSTAR' in filters %}selected{% endif %}>VSTAR</option>
-                    <option value="ex" {% if 'ex' in filters %}selected{% endif %}>ex</option>
-                    <option value="EX" {% if 'EX' in filters %}selected{% endif %}>EX</option>
-                    <option value="GX" {% if 'GX' in filters %}selected{% endif %}>GX</option>
-                    <option value="Rapid Strike" {% if 'Rapid Strike' in filters %}selected{% endif %}>Rapid Strike</option>
-                    <option value="Single Strike" {% if 'Single Strike' in filters %}selected{% endif %}>Single Strike</option>
-                    <option value="Radiant" {% if 'Radiant' in filters %}selected{% endif %}>Radiant</option>
-                    <option value="V" {% if 'V' in filters %}selected{% endif %}>V</option>
-                    <option value="SP" {% if 'SP' in filters %}selected{% endif %}>SP</option>
-                    <option value="Prime" {% if 'Prime' in filters %}selected{% endif %}>Prime</option>
-                    <option value="TAG TEAM" {% if 'TAG TEAM' in filters %}selected{% endif %}>TAG TEAM</option>
-                    <option value="Team Plasma" {% if 'Team Plasma' in filters %}selected{% endif %}>Team Plasma</option>
-                    <option value="Tera" {% if 'Tera' in filters %}selected{% endif %}>Tera</option>
-                    <option value="Ultra Beast" {% if 'Ultra Beast' in filters %}selected{% endif %}>Ultra Beast</option>
-                    <option value="Star" {% if 'Star' in filters %}selected{% endif %}>Star</option>
-                </select>
-
-                <h4>Trainer</h4>
-                <select name="Trainer" id="trainer-subtypes" multiple size="17">
-                    <option value="ACE SPEC" {% if 'ACE SPEC' in filters %}selected{% endif %}>ACE SPEC</option>
-                    <option value="Ancient" {% if 'Ancient' in filters %}selected{% endif %}>Ancient</option>
-                    <option value="Fusion Strike" {% if 'Fusion Strike' in filters %}selected{% endif %}>Fusion Strike</option>
-                    <option value="Future" {% if 'Future' in filters %}selected{% endif %}>Future</option>
-                    <option value="Item" {% if 'Item' in filters %}selected{% endif %}>Item</option>
-                    <option value="Pokemon Tool" {% if 'Pokemon Tool' in filters %}selected{% endif %}>Pokemon Tool</option>
-                    <option value="Pokemon Tool F" {% if 'Pokemon Tool F' in filters %}selected{% endif %}>Pokemon Tool F</option>
-                    <option value="Goldenrod Game Corner" {% if 'Goldenrod Game Corner' in filters %}selected{% endif %}>Goldenrod Game Corner</option>
-                    <option value="Rapid Strike" {% if 'Rapid Strike' in filters %}selected{% endif %}>Rapid Strike</option>
-                    <option value="Rocket’s Secret Machine" {% if 'Rocket’s Secret Machine' in filters %}selected{% endif %}>Rocket’s Secret Machine</option>
-                    <option value="Single Strike" {% if 'Single Strike' in filters %}selected{% endif %}>Single Strike</option>
-                    <option value="Stadium" {% if 'Stadium' in filters %}selected{% endif %}>Stadium</option>
-                    <option value="Supporter" {% if 'Supporter' in filters %}selected{% endif %}>Supporter</option>
-                    <option value="Technical Machine" {% if 'Technical Machine' in filters %}selected{% endif %}>Technical Machine</option>
-                    <option value="Team Plasma" {% if 'Team Plasma' in filters %}selected{% endif %}>Team Plasma</option>
-                    <option value="TAG TEAM" {% if 'TAG TEAM' in filters %}selected{% endif %}>TAG TEAM</option>
-                    <option value="Star" {% if 'Star' in filters %}selected{% endif %}>Star</option>
-                </select>
-
-                <h4>Energy</h4>
-                <select name="Energy" id="energy-subtypes" multiple size="8">
-                    <option value="Special" {% if 'Special' in filters %}selected{% endif %}>Special</option>
-                    <option value="Star" {% if 'Star' in filters %}selected{% endif %}>Star</option>
-                    <option value="ACE SPEC" {% if 'ACE SPEC' in filters %}selected{% endif %}>ACE SPEC</option>
-                    <option value="Fusion Strike" {% if 'Fusion Strike' in filters %}selected{% endif %}>Fusion Strike</option>
-                    <option value="Rapid Strike" {% if 'Rapid Strike' in filters %}selected{% endif %}>Rapid Strike</option>
-                    <option value="Single Strike" {% if 'Single Strike' in filters %}selected{% endif %}>Single Strike</option>
-                    <option value="Team Plasma" {% if 'Team Plasma' in filters %}selected{% endif %}>Team Plasma</option>
-                </select>
-            </div>
-
-            <!-- Pokémon Stage Filters -->
-            <div>
-                <h3>Pokémon Stage</h3>
-                <select name="Pokemon-Stage" id="stage-select" multiple size="12">
-                    <option value="Baby" {% if 'Baby' in filters %}selected{% endif %}>Baby</option>
-                    <option value="Basic" {% if 'Basic' in filters %}selected{% endif %}>Basic</option>
-                    <option value="Stage 1" {% if 'Stage 1' in filters %}selected{% endif %}>Stage 1</option>
-                    <option value="Stage 2" {% if 'Stage 2' in filters %}selected{% endif %}>Stage 2</option>
-                    <option value="MEGA" {% if 'MEGA' in filters %}selected{% endif %}>MEGA</option>
-                    <option value="VMAX" {% if 'VMAX' in filters %}selected{% endif %}>VMAX</option>
-                    <option value="VSTAR" {% if 'VSTAR' in filters %}selected{% endif %}>VSTAR</option>
-                    <option value="V-UNION" {% if 'V-UNION' in filters %}selected{% endif %}>V-UNION</option>
-                    <option value="LEVEL-UP" {% if 'LEVEL-UP' in filters %}selected{% endif %}>LEVEL-UP</option>
-                    <option value="LEGEND" {% if 'LEGEND' in filters %}selected{% endif %}>LEGEND</option>
-                    <option value="BREAK" {% if 'BREAK' in filters %}selected{% endif %}>BREAK</option>
-                    <option value="Restored" {% if 'Restored' in filters %}selected{% endif %}>Restored</option>
-                </select>
-            </div>
-
-            <!-- Type Filters -->
-            <div>
-                <h3>Types</h3>
-                <label><input type="checkbox" name="types" value="Colorless" {% if 'Colorless' in filters %}checked{% endif %}> Colorless</label>
-                <label><input type="checkbox" name="types" value="Darkness" {% if 'Darkness' in filters %}checked{% endif %}> Darkness</label>
-                <label><input type="checkbox" name="types" value="Dragon" {% if 'Dragon' in filters %}checked{% endif %}> Dragon</label>
-                <label><input type="checkbox" name="types" value="Fairy" {% if 'Fairy' in filters %}checked{% endif %}> Fairy</label>
-                <label><input type="checkbox" name="types" value="Fighting" {% if 'Fighting' in filters %}checked{% endif %}> Fighting</label>
-                <label><input type="checkbox" name="types" value="Fire" {% if 'Fire' in filters %}checked{% endif %}> Fire</label>
-                <label><input type="checkbox" name="types" value="Grass" {% if 'Grass' in filters %}checked{% endif %}> Grass</label>
-                <label><input type="checkbox" name="types" value="Lightning" {% if 'Lightning' in filters %}checked{% endif %}> Lightning</label>
-                <label><input type="checkbox" name="types" value="Metal" {% if 'Metal' in filters %}checked{% endif %}> Metal</label>
-                <label><input type="checkbox" name="types" value="Psychic" {% if 'Psychic' in filters %}checked{% endif %}> Psychic</label>
-                <label><input type="checkbox" name="types" value="Water" {% if 'Water' in filters %}checked{% endif %}> Water</label>
-            </div>
-
-            <!-- HP Range -->
-            <div>
-                <h3>HP</h3>
-                <label for="hp-min">Min HP:</label>
-                <input type="number" id="hp-min" name="hp_min" placeholder="Low end" value="{{ filters.hp_min|default:'' }}">
-                <label for="hp-max">Max HP:</label>
-                <input type="number" id="hp-max" name="hp_max" placeholder="High end" value="{{ filters.hp_max|default:'' }}">
-            </div>
-
-            <!-- Weaknesses -->
-            <div>
-                <h3>Weaknesses</h3>
-                <label><input type="checkbox" name="weaknesses" value="Colorless" {% if 'Colorless' in filters %}checked{% endif %}> Colorless</label>
-                <label><input type="checkbox" name="weaknesses" value="Darkness" {% if 'Darkness' in filters %}checked{% endif %}> Darkness</label>
-                <label><input type="checkbox" name="weaknesses" value="Dragon" {% if 'Dragon' in filters %}checked{% endif %}> Dragon</label>
-                <label><input type="checkbox" name="weaknesses" value="Fairy" {% if 'Fairy' in filters %}checked{% endif %}> Fairy</label>
-                <label><input type="checkbox" name="weaknesses" value="Fighting" {% if 'Fighting' in filters %}checked{% endif %}> Fighting</label>
-                <label><input type="checkbox" name="weaknesses" value="Fire" {% if 'Fire' in filters %}checked{% endif %}> Fire</label>
-                <label><input type="checkbox" name="weaknesses" value="Grass" {% if 'Grass' in filters %}checked{% endif %}> Grass</label>
-                <label><input type="checkbox" name="weaknesses" value="Lightning" {% if 'Lightning' in filters %}checked{% endif %}> Lightning</label>
-                <label><input type="checkbox" name="weaknesses" value="Metal" {% if 'Metal' in filters %}checked{% endif %}> Metal</label>
-                <label><input type="checkbox" name="weaknesses" value="Psychic" {% if 'Psychic' in filters %}checked{% endif %}> Psychic</label>
-                <label><input type="checkbox" name="weaknesses" value="Water" {% if 'Water' in filters %}checked{% endif %}> Water</label>
-            </div>
-
-            <!-- Resistances -->
-            <div>
-                <h3>Resistacnes</h3>
-                <label><input type="checkbox" name="resistances" value="Colorless" {% if 'Colorless' in filters %}checked{% endif %}> Colorless</label>
-                <label><input type="checkbox" name="resistances" value="Darkness" {% if 'Darkness' in filters %}checked{% endif %}> Darkness</label>
-                <label><input type="checkbox" name="resistances" value="Dragon" {% if 'Dragon' in filters %}checked{% endif %}> Dragon</label>
-                <label><input type="checkbox" name="resistances" value="Fairy" {% if 'Fairy' in filters %}checked{% endif %}> Fairy</label>
-                <label><input type="checkbox" name="resistances" value="Fighting" {% if 'Fighting' in filters %}checked{% endif %}> Fighting</label>
-                <label><input type="checkbox" name="resistances" value="Fire" {% if 'Fire' in filters %}checked{% endif %}> Fire</label>
-                <label><input type="checkbox" name="resistances" value="Grass" {% if 'Grass' in filters %}checked{% endif %}> Grass</label>
-                <label><input type="checkbox" name="resistances" value="Lightning" {% if 'Lightning' in filters %}checked{% endif %}> Lightning</label>
-                <label><input type="checkbox" name="resistances" value="Metal" {% if 'Metal' in filters %}checked{% endif %}> Metal</label>
-                <label><input type="checkbox" name="resistances" value="Psychic" {% if 'Psychic' in filters %}checked{% endif %}> Psychic</label>
-                <label><input type="checkbox" name="resistances" value="Water" {% if 'Water' in filters %}checked{% endif %}> Water</label>
-            </div>
-
-            <!-- Retreat Cost Range -->
-            <div>
-                <h3>Converted Retreat Cost</h3>
-                <label for="retreat-min">Min Cost:</label>
-                <input type="number" id="retreat-min" name="retreat_min" placeholder="Low end" value="{{ filters.retreat_min|default:'' }}">
-                <label for="retreat-max">Max Cost:</label>
-                <input type="number" id="retreat-max" name="retreat_max" placeholder="High end" value="{{ filters.retreat_max|default:'' }}">
-            </div>
-
-            <!-- Series multiselect -->
-            <div>
-                <h3>Series</h3>
-                <select name="Series" id="series-select" multiple size="10">
-                    <option value="Base" {% if 'Base' in filters %}selected{% endif %}>Base</option>
-                    <option value="EX" {% if 'EX' in filters %}selected{% endif %}>EX</option>
-                    <option value="Diamond & Pearl" {% if 'Diamond & Pearl' in filters %}selected{% endif %}>Diamond & Pearl</option>
-                    <option value="Platinum" {% if 'Platinum' in filters %}selected{% endif %}>Platinum</option>
-                    <option value="HeartGold & SoulSilver" {% if 'HeartGold & SoulSilver' in filters %}selected{% endif %}>HeartGold & SoulSilver</option>
-                    <option value="Black & White" {% if 'Black & White' in filters %}selected{% endif %}>Black & White</option>
-                    <option value="XY" {% if 'XY' in filters %}selected{% endif %}>XY</option>
-                    <option value="Sun & Moon" {% if 'Sun & Moon' in filters %}selected{% endif %}>Sun & Moon</option>
-                    <option value="Sword & Shield" {% if 'Sword & Shield' in filters %}selected{% endif %}>Sword & Shield</option>
-                    <option value="Scarlet & Violet" {% if 'Scarlet & Violet' in filters %}selected{% endif %}>Scarlet & Violet</option>
-
-                </select>
-            </div>
-
-            <!-- Pokedex Number Range -->
-            <div>
-                <h3>National Pokedex Number</h3>
-                <label for="dex-min">Min Number:</label>
-                <input type="number" id="dex-min" name="dex_min" placeholder="Low end" value="{{ filters.pokedex_min|default:'' }}">
-                <label for="dex-max">Max Number:</label>
-                <input type="number" id="dex-max" name="dex_max" placeholder="High end" value="{{ filters.pokedex_max|default:'' }}">
-            </div>
-
-            <!-- Artist search -->
-            <div>
-                <h3>Artist</h3>
-                <label for="search">Artist Name</label>
-                <input type="text" id="search-bar" name="q" placeholder="Any part of the artist name, e.g. “Shizurow”" value="{{ query }}">
-            </div>
-
-            <!-- Submit Button -->
-            <div>
-                <button type="submit">Apply Filters</button>
-            </div>
-
-        </form>
+        </div>
     </div>
 </div>
 
-    <!-- Card List -->
-    <div id="card-list">
-        {% for card in cards %}
-            <div class="card">
-                <h3>{{ card.name }}</h3>
-                <p>Supertype: {{ card.supertype }}</p>
-                <p>Rarity: {{ card.rarity }}</p>
-                <img src="{{ card.images.small }}" alt="{{ card.name }}">
-            </div>
-        {% empty %}
-            <p>No Pokémon found for your search/filter.</p>
-        {% endfor %}
-    </div>
+
+    <hr>
+
+    <!-- Search Results -->
+    {% if cards %}
+        <h2>Search Results</h2>
+        <div class="row">
+            {% for card in cards %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ card.images.small }}" class="card-img-top" alt="{{ card.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ card.name }}</h5>
+                            <p class="card-text">
+                                <strong>Id:</strong> {{ card.id }}<br>
+                                <strong>Supertype:</strong> {{ card.supertype }}<br>
+                                <strong>Subtype:</strong> {{ card.subtypes }}<br>
+                                <strong>Rarity:</strong> {{ card.rarity }}<br>
+                                <strong>Type:</strong> {{ card.types }}<br>
+                                <strong>Series:</strong> {{ card.set.series }}<br>
+                                <strong>Set:</strong> {{ card.set.name }}<br>
+                                <strong>Set Id:</strong> {{ card.set.id }}
+                            </p>
+                            <h6>Prices:</h6>
+                            <ul>
+                                {% if card.tcgplayer %}
+                                    {% for price in card.prices %}
+                                        <li>{{ price.type|title }}: Market: ${{ price.market }}</li>
+                                    {% empty %}
+                                        <li>No price data available.</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No price data available.</li>
+                                {% endif %}
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No cards found matching your criteria.</p>
+    {% endif %}
 
     <!-- Pagination -->
-    <div id="pagination">
-        {% if page > 1 %}
-            <a href="?page={{ page|add:-1 }}{% for type in filters %}&types={{ type }}{% endfor %}">Previous</a>
-        {% endif %}
-        <span>Page {{ page }}</span>
-        <a href="?page={{ page|add:1 }}{% for type in filters %}&types={{ type }}{% endfor %}">Next</a>
-    </div>
-
-</body>
-</html>
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% query_transform page=page|add:-1 %}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link">{{ page }}</span>
+            </li>
+            {% if cards %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% query_transform page=page|add:1 %}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

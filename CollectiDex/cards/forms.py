@@ -1,5 +1,3 @@
-from random import choices
-
 from django import forms
 
 class CardFilterForm(forms.Form):
@@ -13,6 +11,48 @@ class CardFilterForm(forms.Form):
         choices = SUPER_TYPES,
         required = False,
         label = 'Supertype'
+    )
+
+    SERIES_CHOICES = [
+        ('scarlet & violet', 'Scarlet & Violet'),
+        ('sword & shield', 'Sword & Shield'),
+        ('sun & moon', 'Sun & Moon'),
+        ('xy', 'XY'),
+        ('black & white', 'Black & White'),
+        ('heartgold & soulsilver', 'HeartGold & SoulSilver'),
+        ('platinum', 'Platinum'),
+        ('diamond & pearl', 'Diamond & Pearl'),
+        ('ex', 'EX'),
+        ('base', 'Base'),
+        ('other_series', 'Other'),
+    ]
+    series = forms.MultipleChoiceField(
+        choices = SERIES_CHOICES,
+        required = False,
+        label = 'Series',
+        widget = forms.CheckboxSelectMultiple
+    )
+
+    SCARLET_VIOLET_SETS = [
+        ('sv8', 'Surging Sparks'),
+        ('sv7', 'Stellar Crown'),
+        ('sv6pt5', 'Shrouded Fabel'),
+        ('sv6', 'Twilight Masquerade'),
+        ('sv5', 'Temporal Forces'),
+        ('sv4pt5', 'Paldean Fates'),
+        ('sv4', 'Paradox Rift'),
+        ('sv3pt5', '151'),
+        ('sv3', 'Obsidian Flames'),
+        ('sv2', 'Paldea Evolved'),
+        ('sv1', 'Scarlet & Violet Base'),
+        ('sve', 'Scarlet & Violet Energies'),
+        ('svp', 'SV Black Star Promos'),
+    ]
+    scarlet_violet_sets = forms.MultipleChoiceField(
+        choices = SCARLET_VIOLET_SETS,
+        required = False,
+        label = 'Scarlet Violet',
+        widget = forms.CheckboxSelectMultiple
     )
 
     # Pokémon Subtypes
@@ -180,4 +220,12 @@ class CardFilterForm(forms.Form):
         label="Other Rarities"
     )
 
-    name = forms.CharField(required=False)
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'list':'dataListOptions',
+                   'placeholder': 'Search for a card'
+            }),
+        label="Name",
+        max_length=100,
+        required=False)

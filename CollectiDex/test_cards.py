@@ -56,9 +56,11 @@ print()
 """
 # Variables
 supertype = ''
-subtypes = ['ex', 'basic']
+subtypes = []
 types = []
 rarity = ''
+series = ['scarlet & violet']
+sets = []
 
 # Build the query dynamically
 query_parts = []
@@ -73,18 +75,35 @@ if types:
     query_parts.append(f'({types_query})')
 if rarity:
     query_parts.append(f'rarity:"{rarity}"')
+if series:
+    if "Other" in series:
+        series_query = ' AND '.join([f'-set.series:"{series}"' for series in series])
+        query_parts.append(f'({series_query})')
+    else:
+        series_query = ' OR '.join([f'set.series:"{series}"' for series in series])
+        query_parts.append(f'({series_query})')
+
+if sets:
+    sets_query = ' OR '.join([f'set.id:"{set}"' for set in sets])
+    query_parts.append(f'({sets_query})')
 
 # Combine all query parts into the final query string
 query_string = " ".join(query_parts)
 
 # Use the query string in your API call
-queryTest = Card.where(q=query_string, page=4)
+queryTest = Card.where(q=query_string, pageSize=250, page=12)
 
 print("Query:", query_string)
 
 print(f"Found {len(queryTest)} cards.")
 for card in queryTest:
-    print(f"Card: {card.name}, Supertype: {card.supertype}, Subtype: {card.subtypes}, Rarity: {card.rarity}, Type: {card.types}")
+    #print(f"Card: {card.name}, Supertype: {card.supertype}, Subtype: {card.subtypes}, Rarity: {card.rarity}, Type: {card.types}, Series: {card.set.series}, Set: {card.set.name}")
+    print(f" Set Name: {card.set.name}, ID: {card.set.id}")
+
+queryTest = Card.where(q='set.name:"paradox rift"', pageSize=10, page=1)
+for card in queryTest:
+    #print(f"Card: {card.name}, Supertype: {card.supertype}, Subtype: {card.subtypes}, Rarity: {card.rarity}, Type: {card.types}, Series: {card.set.series}, Set: {card.set.name}")
+    print(f" Set Name: {card.set.name}, ID: {card.set.id}")
 
 #if __name__ == "__main__":
     #test_cards()

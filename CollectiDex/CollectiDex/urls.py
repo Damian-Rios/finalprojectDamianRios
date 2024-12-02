@@ -22,8 +22,7 @@ urlpatterns = [
     path('', users_views.index, name='index'),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    #path('portfolio/', include('portfolio.urls')),
-    #path('sets/', include('sets.urls')),
     path('cards/', include('cards.urls')),
     path('sets/', include('sets.urls')),
+    path('portfolio/', include('portfolio.urls')),
 ]
