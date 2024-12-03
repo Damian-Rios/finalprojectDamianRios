@@ -177,3 +177,13 @@ a:hover { color: var(--primary-color); }
 .footer .border-highlight {
     border-top: 1px solid var(--primary-color-highlight);
 }
+
+.card-image-top {
+    transition: transform 0.3s ease; /* Smooth scaling */
+}
+
+.card-image-top:hover {
+    transform: scale(2.5); /* Scale the image to 110% */
+    cursor: pointer; /* Change the cursor to indicate clickability */
+}
+

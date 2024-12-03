@@ -6,6 +6,7 @@ from .forms import CardFilterForm
 from .models import UserCard
 from sets.models import UserSet  # Import the UserSet model
 import requests
+from django.contrib import messages
 
 
 def card_prices(card):
@@ -116,43 +117,51 @@ def search_cards(request):
 @login_required
 def add_card_to_collection(request, card_id):
     """Add a card to the user's collection by fetching data from the API."""
-    user = request.user
-    try:
-        card = Card.find(card_id)  # Fetch the card from the API
-    except Exception:
-        return JsonResponse({'error': 'Card not found'}, status=404)
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))  # Default to 1 if not provided
+        user = request.user
+        try:
+            card = Card.find(card_id)  # Fetch the card from the API
+        except Exception:
+            return render(request, 'cards/card_list.html', {'error': 'Card not found'})
 
-    # Create or get the associated set
-    set_data = card.set.__dict__
-    user_set, created = UserSet.objects.get_or_create(
-        id=set_data['id'],
-        defaults={
-            'name': set_data['name'],
-            'series': set_data['series'],
-            'printed_total': set_data.get('printedTotal'),
-            'total': set_data.get('total'),
-            'ptcgo_code': set_data.get('ptcgoCode'),
-            'release_date': set_data.get('releaseDate'),
-            'updated_at': set_data.get('updatedAt'),
-            'symbol_url': set_data.get('images', {}).get('symbol'),
-            'logo_url': set_data.get('images', {}).get('logo'),
-        }
-    )
+        # Create or get the associated set
+        set_data = card.set.__dict__
+        user_set, created = UserSet.objects.get_or_create(
+            id=set_data['id'],
+            defaults={
+                'name': set_data['name'],
+                'series': set_data['series'],
+                'printed_total': set_data.get('printedTotal'),
+                'total': set_data.get('total'),
+                'ptcgo_code': set_data.get('ptcgoCode'),
+            }
+        )
 
-    # Add the card to the user's collection
-    UserCard.objects.create(
-        user=user,
-        card_id=card.id,
-        name=card.name,
-        series=card.series,
-        set=user_set,
-        set_number=card.number,
-        rarity=card.rarity,
-        types=card.types,
-        market_price=card.tcgplayer.prices.get('market', {}).get('price') if card.tcgplayer else None,
-        image_small_url=card.images.small if card.images else None,
-        image_large_url=card.images.large if card.images else None,
-        tcgplayer_url=card.tcgplayer.url if card.tcgplayer else None,
-    )
+        # Combine card number with total number of cards in the set
+        set_number = f"{card.number}/{card.set.total}" if card.number and card.set.total else "Unknown/Unknown"
 
-    return JsonResponse({'success': 'Card added to collection'})
+        existing_card, created = UserCard.objects.get_or_create(
+            user=user,
+            card_id=card.id,
+            defaults={
+                'name': card.name,
+                'series': card.set.series,
+                'set': user_set,
+                'set_number': set_number,
+                'rarity': card.rarity,
+                'types': card.types,
+                'quantity': 0,  # Default to 0, will increment below
+            }
+        )
+
+        # Increment quantity if the card already exists
+        existing_card.quantity += quantity
+        existing_card.save()
+
+        if created:
+            messages.success(request, f'{card.name} was successfully added to your collection!')
+        else:
+            messages.success(request, f'{card.name} quantity updated in your collection!')
+
+        return redirect(f'{request.META.get("HTTP_REFERER", "/")}')

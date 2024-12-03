@@ -129,7 +129,12 @@
             {% for card in cards %}
                 <div class="col-md-4">
                     <div class="card mb-4">
-                        <img src="{{ card.images.small }}" class="card-img-top" alt="{{ card.name }}">
+                        <!-- Hoverable image -->
+                        <img src="{{ card.images.small }}"
+                             class="card-img-top"
+                             alt="{{ card.name }}"
+                             data-bs-toggle="modal"
+                             data-bs-target="#addCardModal-{{ card.id }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ card.name }}</h5>
                             <p class="card-text">
@@ -141,6 +146,7 @@
                                 <strong>Series:</strong> {{ card.set.series }}<br>
                                 <strong>Set:</strong> {{ card.set.name }}<br>
                                 <strong>Set Id:</strong> {{ card.set.id }}
+                                <strong>Set Number:</strong> {{ card.number }}
                             </p>
                             <h6>Prices:</h6>
                             <ul>
@@ -154,7 +160,28 @@
                                     <li>No price data available.</li>
                                 {% endif %}
                             </ul>
+                        </div>
+                    </div>
+                </div>
 
+                 <!-- Modal for adding the card to collection -->
+                <div class="modal fade" id="addCardModal-{{ card.id }}" tabindex="-1" aria-labelledby="addCardModalLabel-{{ card.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addCardModalLabel-{{ card.id }}">Add "{{ card.name }}" to Collection</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'cards:add_card_to_collection' card.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="quantity-{{ card.id }}" class="form-label">Quantity:</label>
+                                        <input type="number" name="quantity" id="quantity-{{ card.id }}" class="form-control" min="1" value="1" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Add to Collection</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

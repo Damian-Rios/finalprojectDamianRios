@@ -59,8 +59,9 @@ supertype = ''
 subtypes = []
 types = []
 rarity = ''
-series = ['scarlet & violet']
+series = []
 sets = []
+card_id = ['mcd19-1']
 
 # Build the query dynamically
 query_parts = []
@@ -73,6 +74,9 @@ if subtypes:
 if types:
     types_query = ' OR '.join([f'types:"{type}"' for type in types])
     query_parts.append(f'({types_query})')
+if card_id:
+    id_query = ' OR '.join([f'id:"{card_id}"' for card_id in card_id])
+    query_parts.append(f'({id_query})')
 if rarity:
     query_parts.append(f'rarity:"{rarity}"')
 if series:
@@ -105,6 +109,8 @@ for card in queryTest:
     #print(f"Card: {card.name}, Supertype: {card.supertype}, Subtype: {card.subtypes}, Rarity: {card.rarity}, Type: {card.types}, Series: {card.set.series}, Set: {card.set.name}")
     print(f" Set Name: {card.set.name}, ID: {card.set.id}")
 
+card = Card.find('xy1-1')
+print(card)
 #if __name__ == "__main__":
     #test_cards()
 

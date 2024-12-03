@@ -1,12 +1,95 @@
-{% extends "base.html" %}
-
-{% block title %}
-Dashboard
-{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome to the Dashboard</h1>
-    <p>Here you can manage and view your portfolio projects.</p>
+<div class="container mt-5">
+    <h2>Dashboard</h2>
+    <div class="row">
+        <!-- Total Cards in Collection -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Total Cards in Collection
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_cards }}</h5>
+                    <p class="card-text">Total number of cards in your collection.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Value of Collection -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Total Value
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_value }}</h5>
+                    <p class="card-text">The current total value of your collection.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unique Cards -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Unique Cards
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ unique_cards }}</h5>
+                    <p class="card-text">Number of unique cards in your collection.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sets Completed -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Sets Completed
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ sets_completed }}</h5>
+                    <p class="card-text">The number of sets you've completed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Cards by Rarity
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'cards:cards_by_rarity' %}" class="btn btn-primary">View Cards by Rarity</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    View Collection
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'cards:view_collection' %}" class="btn btn-primary">View All Cards</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Sets in Progress
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'cards:sets_in_progress' %}" class="btn btn-primary">View Sets in Progress</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
