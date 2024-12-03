@@ -3,6 +3,7 @@ from cards.models import UserCard
 from sets.models import UserSet
 from django.db.models import Sum, Count
 from django.contrib.auth.decorators import login_required
+import requests
 
 
 # Helper function to check if all cards in a set are in the user's collection
@@ -18,6 +19,17 @@ def check_set_completion(user, user_set):
 
     # If the user has all the cards, the length of user_cards should match the length of set_card_ids
     return set_card_ids == sorted(user_cards)
+
+# Helper function to get market price of a card
+def get_market_price(card_id):
+    api_url = f"https://prices.pokemontcg.io/tcgplayer/{card_id}"
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('prices', {}).get('holofoil', {}).get('market', 0)
+    except (requests.RequestException, KeyError, ValueError):
+        return 0  # Return 0 if there's an error fetching the price
 
 @login_required
 def dashboard(request):
