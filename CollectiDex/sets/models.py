@@ -7,6 +7,7 @@ class UserSet(models.Model):
     printed_total = models.IntegerField(null=True, blank=True)  # Number of cards in the set as printed
     total = models.IntegerField(null=True, blank=True)  # Total cards in the set including secret rares
     ptcgo_code = models.CharField(max_length=10, null=True, blank=True)  # Online play code, e.g., "SSH"
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
