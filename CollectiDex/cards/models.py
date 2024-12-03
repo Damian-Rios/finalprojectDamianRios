@@ -10,6 +10,7 @@ class UserCard(models.Model):
     rarity = models.CharField(max_length=100, null=True, blank=True)
     types = models.JSONField(null=True, blank=True)  # Requires PostgreSQL or JSON-capable DB
     quantity = models.PositiveIntegerField(default=0)  # Duplicates tracking
+    market_price_url = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.card_id})"

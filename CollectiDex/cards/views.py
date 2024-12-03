@@ -152,6 +152,7 @@ def add_card_to_collection(request, card_id):
                 'rarity': card.rarity,
                 'types': card.types,
                 'quantity': 0,  # Default to 0, will increment below
+                'market_price_url': card.tcgplayer.url if hasattr(card, 'tcgplayer') and hasattr(card.tcgplayer, 'url') else '',
             }
         )
 
