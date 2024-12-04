@@ -1,42 +1,89 @@
+{% extends "base.html" %}
 {% load custom_tags %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sets List</title>
-</head>
-<body>
-    <h1>Pokémon Sets</h1>
 
-    <ul>
+{% block title %}Set Search{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="text-center mb-4">Pokémon Sets</h1>
+
+
+    <!-- Search Bar -->
+    <form method="get" action="{% url 'sets:set_list' %}" class="d-flex mb-3">
+        {% csrf_token %}
+        {{ form.name }}
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <!-- Filter Button -->
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#setFilterModal">Filters</button>
+    </form>
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="setFilterModal" tabindex="-1" aria-labelledby="setFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="setFilterModalLabel">Filter Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="get" action="{% url 'sets:search_sets' %}">
+                    {% csrf_token %}
+
+                    <!-- Series Section -->
+                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeries" aria-expanded="false" aria-controls="collapseSeries">
+                        Series
+                    </button>
+                    <div class="collapse" id="collapseSeries">
+                        <div class="card card-body">
+                            <label for="series" class="form-label">Series:</label>
+                            {{ form.series }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for set in sets %}
-            <li>
-                <strong>{{ set.name }}</strong><br>
-                Series: {{ set.series }}<br>
-                Release Date: {{ set.releaseDate }}<br>
-                Total Cards: {{ set.total }}<br>
-            </li>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ set.images.logo }}"
+                     class="card-img-top img-card-custom"
+                     alt="{{ set.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ set.name }}</h5>
+                    <p class="card-text">
+                        <strong>Series:</strong> {{ set.series }}<br>
+                        <strong>Release Date:</strong> {{ set.releaseDate }}<br>
+                        <strong>Total Cards:</strong> {{ set.total }}
+                    </p>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 
-    <nav>
-        <ul class="pagination">
+    <!-- Pagination -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
             {% if page > 1 %}
-                <li>
-                    <a href="?{% query_transform page=page|add:-1 %}">Previous</a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="?{% query_transform page=page|add:-1 %}">Previous</a>
+            </li>
             {% endif %}
-
             <li class="page-item active">
-                <a href="javascript:void(0)">{{ page }}</a>
+                <span class="page-link">{{ page }}</span>
             </li>
-
-            <li>
-                <a href="?{% query_transform page=page|add:1 %}">Next</a>
+            {% if sets %}
+            <li class="page-item">
+                <a class="page-link" href="?{% query_transform page=page|add:1 %}">Next</a>
             </li>
+            {% endif %}
         </ul>
     </nav>
-
-</body>
-</html>
+</div>
+{% endblock %}

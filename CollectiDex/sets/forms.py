@@ -1,10 +1,32 @@
 from django import forms
 
 class SetFilterForm(forms.Form):
+    SERIES_CHOICES = [
+        ('scarlet & violet', 'Scarlet & Violet'),
+        ('sword & shield', 'Sword & Shield'),
+        ('sun & moon', 'Sun & Moon'),
+        ('xy', 'XY'),
+        ('black & white', 'Black & White'),
+        ('heartgold & soulsilver', 'HeartGold & SoulSilver'),
+        ('platinum', 'Platinum'),
+        ('diamond & pearl', 'Diamond & Pearl'),
+        ('ex', 'EX'),
+        ('base', 'Base'),
+        ('other_series', 'Other'),
+    ]
     series = forms.MultipleChoiceField(
-        choices=[('XY', 'XY'), ('Sun & Moon', 'Sun & Moon'), ('Sword & Shield', 'Sword & Shield')],
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+        choices=SERIES_CHOICES,
+        required=False,
+        label='Series',
+        widget=forms.CheckboxSelectMultiple
     )
-    set_id = forms.CharField(required=False)
-    name = forms.CharField(required=False)
+
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'list': 'dataListOptions',
+                   'placeholder': 'Search for a card'
+                   }),
+        label="Name",
+        max_length=100,
+        required=False)

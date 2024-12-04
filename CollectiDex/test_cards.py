@@ -31,13 +31,15 @@ supertypesTest = Supertype.all()
 print(f"Found {len(supertypesTest)} supertypes.")
 print(supertypesTest)
 print()
+"""
 
-subtypesTest = Subtype.all()
+subtypesTest = Subtype.all(orderBy='releaseDate')
 print(f"Found {len(subtypesTest)} subtypes.")
 print(subtypesTest)
 
 print()
 
+"""
 rarityTest = Rarity.all()
 print(f"Found {len(rarityTest)} rarity.")
 print(rarityTest)

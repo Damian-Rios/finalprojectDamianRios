@@ -183,7 +183,29 @@ a:hover { color: var(--primary-color); }
 }
 
 .card-image-top:hover {
-    transform: scale(2.5); /* Scale the image to 110% */
+    transform: scale(1.1); /* Scale the image to 110% */
     cursor: pointer; /* Change the cursor to indicate clickability */
 }
+
+.img-card-custom {
+    height: 150px; /* Set a consistent height */
+    object-fit: contain; /* Ensure the image fits nicely without distortion */
+    margin: auto; /* Center the image */
+    transition: transform 0.3s ease;
+}
+
+.img-card-custom:hover {
+    transform: scale(1.5); /* Scale the image to 110% */
+    cursor: pointer; /* Change the cursor to indicate clickability */
+}
+
+.card-img-top {
+    transition: transform 0.3s ease; /* Smooth scaling */
+}
+
+.card-img-top:hover {
+    transform: scale(1.1); /* Scale the image to 110% */
+    cursor: pointer; /* Change the cursor to indicate clickability */
+}
+
 

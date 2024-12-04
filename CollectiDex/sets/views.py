@@ -3,11 +3,17 @@ from pokemontcgsdk import Set
 from .forms import SetFilterForm
 
 def set_list(request):
-    """ Display all Pokémon sets by default (with pagination) """
     page = int(request.GET.get('page', 1))  # Default to page 1
-    page_size = 20  # Number of sets per page
-    sets = Set.where(page=page, pageSize=page_size)  # Fetch paginated results
-    return render(request, 'sets/set_list.html', {'sets': sets, 'page': page})
+    page_size = 20  # Number of cards per page
+    form = SetFilterForm(request.GET)
+
+    if form.is_valid() and 'name' in form.cleaned_data and form.cleaned_data['name']:
+        name = form.cleaned_data['name']
+        sets = Set.where(q=f'name:"{name}*"', page=page, pageSize=page_size)
+    else:
+        sets = Set.where(page=page, pageSize=page_size)
+
+    return render(request, 'sets/set_list.html', {'form':form, 'sets': sets, 'page': page, 'page_size': page_size})
 
 def search_sets(request):
     form = SetFilterForm(request.GET)
@@ -17,26 +23,35 @@ def search_sets(request):
 
     if form.is_valid():
         # Get form data
-        series = form.cleaned_data['series']
-        set_id = form.cleaned_data['set_id']
-        name = form.cleaned_data['name']
+        set_series = form.cleaned_data['series']
+        set_name = form.cleaned_data['name']
 
         # Build the query dynamically
         query_parts = []
 
-        if series:
-            series_query = ' OR '.join([f'series:"{s}"' for s in series])
-            query_parts.append(f'({series_query})')
-        if set_id:
-            query_parts.append(f'id:"{set_id}"')
-        if name:
-            query_parts.append(f'name:"{name}*"')
+        if set_name:
+            query_parts.append(f'name:"{set_name}*"')
+
+        if set_series:
+            if "other_series" in set_series:
+                # Exclude common series
+                excluded_series = [
+                    "scarlet & violet", "sword & shield", "sun & moon",
+                    "xy", "black & white", "heartgold & soulsilver", "platinum",
+                    "diamond & pearl", "ex", "base"
+                ]
+                excluded_query = " ".join([f'-series:"{s}"' for s in excluded_series])
+                query_parts.append(f'({excluded_query})')
+            else:
+                # Include selected series
+                series_query = ' OR '.join([f'series:"{s}"' for s in set_series])
+                query_parts.append(f'({series_query})')
 
         # Combine all query parts into the final query string
         query_string = " ".join(query_parts)
 
-        # Fetch sets with the dynamic query
-        queryTest = Set.where(q=query_string, page=page, pageSize=page_size)
-        sets = queryTest
+        # Call the API to fetch the sets
+        query_test = Set.where(q=query_string, page=page, pageSize=page_size)
+        sets = query_test
 
-    return render(request, 'sets/search_results.html', {'form': form, 'sets': sets, 'page': page, 'page_size': page_size})
+    return render(request, 'sets/set_list.html', {'form': form, 'sets': sets, 'page': page, 'page_size': page_size})
