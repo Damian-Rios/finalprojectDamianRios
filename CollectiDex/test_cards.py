@@ -1,5 +1,6 @@
 
 from pokemontcgsdk import RestClient, Card, Set, Subtype, Supertype, Rarity, Type
+import pprint
 
 # Configure the API key
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')  # Replace with your API key
@@ -110,7 +111,13 @@ for card in queryTest:
     print(f" Set Name: {card.set.name}, ID: {card.set.id}")
 
 card = Card.find('xy1-1')
-print(card)
+price_type = "holofoil"
+
+price_info = getattr(card.tcgplayer.prices, price_type, None)
+if price_info:
+    pprint.pprint(price_info.market)
+else:
+    print(f"No price information found for variant: {price_type}")
 #if __name__ == "__main__":
     #test_cards()
 

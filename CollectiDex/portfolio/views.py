@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from cards.models import UserCard
 from sets.models import UserSet
+from cards.views import card_prices
+from pokemontcgsdk import Card
 from django.db.models import Sum, Count
 from django.contrib.auth.decorators import login_required
 import requests
@@ -8,34 +10,48 @@ import requests
 
 # Helper function to check if all cards in a set are in the user's collection
 def check_set_completion(user, user_set):
-    # Get all card IDs for the set (e.g., sv1-1, sv1-2, sv1-3...)
-    set_card_ids = [f"{user_set.id}-{i}" for i in range(1, user_set.total + 1)]
+    # Get all card IDs in the set
+    set_card_ids = user_set.cards.values_list('card_id', flat=True)
 
-    # Check if all cards exist in the user's collection
+    # Check if the user owns each card in the set
     user_cards = UserCard.objects.filter(
         user=user,
-        card_id__in=set_card_ids
-    ).values_list('card_id', flat=True)  # Get only the card_id of the user's collection
+        card__card_id__in=set_card_ids  # Matching the card_id from the CardModel
+    ).values_list('card__card_id', flat=True)  # Get card_ids from the CardModel
 
-    # If the user has all the cards, the length of user_cards should match the length of set_card_ids
-    return set_card_ids == sorted(user_cards)
+    # If the user has all the cards in the set, return True
+    return set_card_ids.count() == user_cards.count()
+
 
 # Helper function to get market price of a card
-def get_market_price(card_id):
-    api_url = f"https://prices.pokemontcg.io/tcgplayer/{card_id}"
+# Helper function to get market price of a card
+def get_market_price(card_id, variant_type):
     try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-        data = response.json()
-        return data.get('prices', {}).get('holofoil', {}).get('market', 0)
-    except (requests.RequestException, KeyError, ValueError):
-        return 0  # Return 0 if there's an error fetching the price
+        # Fetch the card info using the SDK
+        card_info = Card.find(card_id)
+        print(card_info.name)
+        if not card_info or not hasattr(card_info, 'tcgplayer') or not card_info.tcgplayer.prices:
+            print(f"No price data found for card: {card_id}, variant: {variant_type}")
+            return 0  # Default to 0 if no price info is available
+
+        # Access the price information for the given variant type
+        price_info = getattr(card_info.tcgplayer.prices, variant_type, None)
+        if price_info and hasattr(price_info, 'market'):
+            print(price_info.market)
+            return price_info.market  # Return the market price
+        else:
+            print(f"No market price found for variant: {variant_type}")
+            return 0  # Default to 0 if market price is missing
+    except Exception as e:
+        print(f"Error fetching market price for {card_id}, variant: {variant_type}: {e}")
+        return 0  # Default to 0 if an error occurs
+
 
 @login_required
 def dashboard(request):
     user = request.user
-    sets = UserSet.objects.all()
-    cards = UserCard.objects.filter(user=user).values_list('card_id', flat=True)
+    sets = UserSet.objects.all().prefetch_related('cards')  # Optimized query to fetch all sets with related cards
+    user_cards = UserCard.objects.filter(user=user).select_related('card')  # Optimized query for UserCard data
 
     completed_sets = []
     for user_set in sets:
@@ -43,19 +59,18 @@ def dashboard(request):
             completed_sets.append(user_set)
 
     # Get the total number of cards in the collection
-    total_cards = 0
-    user_cards = UserCard.objects.filter(user=user)
+    total_cards = sum(card.quantity for card in user_cards)
 
-    for card in user_cards:
-        total_cards += card.quantity
-
-    # Get the total value of the collection (assumed to be fetched from card prices)
-    total_value = UserCard.objects.filter(user=request.user).annotate(
-        value=Sum('quantity')  # Just a placeholder. In actual use, multiply by price of each card
-    ).aggregate(Sum('value'))['value__sum'] or 0
+    # Get the total value of the collection (multiplying quantity by market price)
+    total_value = 0
+    for user_card in user_cards:
+        card = user_card.card  # Access the related Card instance
+        variant_type = user_card.variant_type  # The variant type from UserCard
+        market_price = get_market_price(card.card_id, variant_type) or 0  # Ensure market_price is not None
+        total_value += user_card.quantity * market_price
 
     # Get the number of unique cards in the collection
-    unique_cards = UserCard.objects.filter(user=request.user).values('card_id').distinct().count()
+    unique_cards = user_cards.values('card__card_id', 'variant_type').distinct().count()
 
     # Render the dashboard with the stats
     return render(request, 'portfolio/dashboard.html', {

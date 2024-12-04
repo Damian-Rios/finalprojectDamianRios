@@ -24,7 +24,7 @@ def register_view(request):
 
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('users:login')
 
     context = {'registerForm': form}
     return render(request, 'users/register.html', context=context)
@@ -52,4 +52,4 @@ def login_view(request):
 
 def logout_view(request):
     auth.logout(request)
-    return redirect('login')
+    return redirect('users:login')

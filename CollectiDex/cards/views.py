@@ -34,8 +34,6 @@ def card_prices(card):
             if price_info:
                 prices.append({
                     'type': price_type or 'N/A',
-                    'low': getattr(price_info, 'low', 'N/A') or 'N/A',
-                    'high': getattr(price_info, 'high', 'N/A') or 'N/A',
                     'market': getattr(price_info, 'market', 'N/A') or 'N/A',
                 })
     return prices
