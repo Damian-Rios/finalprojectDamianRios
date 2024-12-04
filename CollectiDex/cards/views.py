@@ -1,13 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from pokemontcgsdk import Card
+from pokemontcgsdk import Card, RestClient
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from urllib3 import request
+
 from .forms import CardFilterForm
-from .models import UserCard
+from .models import UserCard, CardModel
 from sets.models import UserSet  # Import the UserSet model
 import requests
 from django.contrib import messages
 
+from pokemontcgsdk import RestClient
+
+RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')
+
+def card_variants(card):
+    variants = []
+    if hasattr(card, 'tcgplayer') and card.tcgplayer and hasattr(card.tcgplayer, 'prices') and card.tcgplayer.prices:
+        price_data = card.tcgplayer.prices.__dict__
+        for price_type, price_info in price_data.items():
+            # Add the price_type if it's valid and not already in the list
+            if price_info and price_type not in variants:
+                variants.append(price_type)
+    print("Variants:", variants)
+    return variants
 
 def card_prices(card):
     prices = []
@@ -39,6 +55,7 @@ def card_list(request):
 
     for card in cards:
         card.prices = card_prices(card)
+        card.variants = card_variants(card)
 
     return render(request, 'cards/card_list.html', {'form': form, 'cards': cards, 'page': page, 'page_size': page_size})
 
@@ -110,6 +127,7 @@ def search_cards(request):
 
         for card in cards:
             card.prices = card_prices(card)
+            card.variants = card_variants(card)
 
     return render(request, 'cards/card_list.html', {'form': form, 'cards': cards, 'page': page, 'page_size': page_size})
 
@@ -119,14 +137,24 @@ def add_card_to_collection(request, card_id):
     """Add a card to the user's collection by fetching data from the API."""
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))  # Default to 1 if not provided
+        variant_type = request.POST.get('variant-type')
+        print("Variant Type: ", variant_type)
         user = request.user
+
+        # Validate variant type
+        if variant_type not in [variant[0] for variant in UserCard.VariantChoices.choices]:
+            messages.error(request, 'Invalid variant type.')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
         try:
-            card = Card.find(card_id)  # Fetch the card from the API
-        except Exception:
-            return render(request, 'cards/card_list.html', {'error': 'Card not found'})
+            # Fetch card from the API
+            api_card = Card.find(card_id)
+        except Card.DoesNotExist:
+            messages.error(request, 'Card not found.')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 
         # Create or get the associated set
-        set_data = card.set.__dict__
+        set_data = api_card.set.__dict__
         user_set, created = UserSet.objects.get_or_create(
             id=set_data['id'],
             defaults={
@@ -138,31 +166,37 @@ def add_card_to_collection(request, card_id):
             }
         )
 
-        # Combine card number with total number of cards in the set
-        set_number = f"{card.number}/{card.set.total}" if card.number and card.set.total else "Unknown/Unknown"
-
-        existing_card, created = UserCard.objects.get_or_create(
-            user=user,
-            card_id=card.id,
+        # Create or get the card in the database
+        card, created = CardModel.objects.get_or_create(
+            card_id=api_card.id,
             defaults={
-                'name': card.name,
-                'series': card.set.series,
+                'name': api_card.name,
+                'series': api_card.set.series,
                 'set': user_set,
-                'set_number': set_number,
-                'rarity': card.rarity,
-                'types': card.types,
-                'quantity': 0,  # Default to 0, will increment below
-                'market_price_url': card.tcgplayer.url if hasattr(card, 'tcgplayer') and hasattr(card.tcgplayer, 'url') else '',
+                'rarity': api_card.rarity,
+                'type': api_card.types,
             }
         )
 
-        # Increment quantity if the card already exists
-        existing_card.quantity += quantity
-        existing_card.save()
+        # Add or update the user's card collection
+        user_card, created = UserCard.objects.get_or_create(
+            user=user,
+            card=card,
+            variant_type=variant_type,
+            defaults={
+                'quantity': 0,  # Initial quantity
+            }
+        )
 
+        # Increment quantity and save
+        user_card.quantity += quantity
+        user_card.save()
+
+        # Set appropriate success messages
         if created:
-            messages.success(request, f'{card.name} was successfully added to your collection!')
+            messages.success(request, f'{card.name} ({variant_type}) was successfully added to your collection!')
         else:
-            messages.success(request, f'{card.name} quantity updated in your collection!')
+            messages.success(request, f'{card.name} ({variant_type}) quantity updated in your collection!')
 
-        return redirect(f'{request.META.get("HTTP_REFERER", "/")}')
+        # Redirect to the referring page or default
+        return redirect(request.META.get('HTTP_REFERER', '/'))

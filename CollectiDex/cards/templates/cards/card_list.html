@@ -176,8 +176,18 @@
                                 <form method="post" action="{% url 'cards:add_card_to_collection' card.id %}">
                                     {% csrf_token %}
                                     <div class="mb-3">
-                                        <label for="quantity-{{ card.id }}" class="form-label">Quantity:</label>
+                                        <label for="quantity-{{ card.id }}" class="form-label">Quantity {{ card.id }}:</label>
                                         <input type="number" name="quantity" id="quantity-{{ card.id }}" class="form-control" min="1" value="1" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="variant-type-{{ card.id }}" class="form-label">Variant {{ card.id }}:</label>
+                                        <select name="variant-type" id="variant-type-{{ card.id }}" class="form-select" required>
+                                            {% for variant in card.variants %}
+                                                <option value="{{ variant }}">{{ variant }}</option>
+                                            {% empty %}
+                                                <option value="">No variants available</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Add to Collection</button>
                                 </form>
