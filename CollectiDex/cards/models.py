@@ -21,6 +21,7 @@ class UserCard(models.Model):
         NORMAL = 'normal', 'Normal'
         HOLOFOIL = 'holofoil', 'Holofoil'
         REVERSE_HOLOFOIL = 'reverseHolofoil', 'Reverse Holofoil'
+        FIRST_EDITION_HOLOFOIL = 'firstEditionHolofoil', 'First Edition Holofoil'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cards')
     card = models.ForeignKey(CardModel, on_delete=models.CASCADE)

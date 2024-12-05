@@ -1,4 +1,4 @@
-from pokemontcgsdk import RestClient, Set
+from pokemontcgsdk import RestClient, Set, Card
 
 # Configure the API key
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')  # Replace with your API key
@@ -33,6 +33,9 @@ queryTest = Set.where(q=query_string)
 
 print("Query:", query_string)
 
-print(f"Found {len(queryTest)} sets.")
-for set in queryTest:
-    print(f"Set: {set.name}, Id: {set.id}, Series: {set.series}, Release Date: {set.releaseDate}, Total Cards: {set.total}")
+
+
+set_cards = Card.where(q='set.id:"sv1"')
+print(f"Found {len(set_cards)} cards.")
+for card in set_cards:
+    print(f'Card: {card.name}')

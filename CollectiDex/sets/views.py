@@ -1,6 +1,8 @@
-from django.shortcuts import render
-from pokemontcgsdk import Set
+from django.http import Http404
+from django.shortcuts import render, get_object_or_404
+from pokemontcgsdk import Set, Card
 from .forms import SetFilterForm
+from cards.views import card_variants, card_prices
 
 def set_list(request):
     page = int(request.GET.get('page', 1))  # Default to page 1
@@ -9,11 +11,31 @@ def set_list(request):
 
     if form.is_valid() and 'name' in form.cleaned_data and form.cleaned_data['name']:
         name = form.cleaned_data['name']
-        sets = Set.where(q=f'name:"{name}*"', page=page, pageSize=page_size)
+        sets = Set.where(q=f'name:"{name}*"', page=page, pageSize=page_size, orderBy='-releaseDate')
     else:
-        sets = Set.where(page=page, pageSize=page_size)
+        sets = Set.where(page=page, pageSize=page_size, orderBy='-releaseDate')
 
     return render(request, 'sets/set_list.html', {'form':form, 'sets': sets, 'page': page, 'page_size': page_size})
+
+
+def set_view(request, set_id):
+    page_size = 20
+    page = int(request.GET.get('page', 1))
+
+    set = Set.find(f'{set_id}')
+
+    try:
+        # Fetch all the cards for this set
+        set_cards = Card.where(q=f'set.id:"{set_id}"', page=page, pageSize=page_size, orderBy='number')
+    except Exception:
+        set_cards = []
+
+
+    for card in set_cards:
+        card.prices = card_prices(card)
+        card.variants = card_variants(card)
+
+    return render(request, 'sets/set_view.html', {'set': set, 'set_cards': set_cards, 'page': page, 'page_size': page_size})
 
 def search_sets(request):
     form = SetFilterForm(request.GET)

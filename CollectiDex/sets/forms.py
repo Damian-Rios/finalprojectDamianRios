@@ -25,7 +25,7 @@ class SetFilterForm(forms.Form):
         widget=forms.TextInput(
             attrs={'class': 'form-control',
                    'list': 'dataListOptions',
-                   'placeholder': 'Search for a card'
+                   'placeholder': 'Search for a set',
                    }),
         label="Name",
         max_length=100,

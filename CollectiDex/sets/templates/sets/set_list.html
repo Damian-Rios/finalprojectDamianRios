@@ -4,9 +4,8 @@
 {% block title %}Set Search{% endblock %}
 
 {% block content %}
-<div class="container my-4">
+<div class="container mt-4">
     <h1 class="text-center mb-4">Pokémon Sets</h1>
-
 
     <!-- Search Bar -->
     <form method="get" action="{% url 'sets:set_list' %}" class="d-flex mb-3">
@@ -17,43 +16,37 @@
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#setFilterModal">Filters</button>
     </form>
 
+    <hr>
+
     <!-- Filter Modal -->
     <div class="modal fade" id="setFilterModal" tabindex="-1" aria-labelledby="setFilterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="setFilterModalLabel">Filter Options</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="get" action="{% url 'sets:search_sets' %}">
-                    {% csrf_token %}
-
-                    <!-- Series Section -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeries" aria-expanded="false" aria-controls="collapseSeries">
-                        Series
-                    </button>
-                    <div class="collapse" id="collapseSeries">
-                        <div class="card card-body">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="setFilterModalLabel">Filter Options</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="get" action="{% url 'sets:search_sets' %}">
+                        <div class="form-group mb-3">
                             <label for="series" class="form-label">Series:</label>
                             {{ form.series }}
                         </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
-                </form>
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Sets Display -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for set in sets %}
         <div class="col">
             <div class="card h-100 shadow-sm">
-                <img src="{{ set.images.logo }}"
-                     class="card-img-top img-card-custom"
-                     alt="{{ set.name }}">
+                <a href="{% url 'sets:set_view' set.id %}">
+                    <img src="{{ set.images.logo }}" class="card-img-top img-card-custom" alt="{{ set.name }}">
+                </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ set.name }}</h5>
                     <p class="card-text">
@@ -78,7 +71,7 @@
             <li class="page-item active">
                 <span class="page-link">{{ page }}</span>
             </li>
-            {% if sets %}
+            {% if sets|length == page_size %}
             <li class="page-item">
                 <a class="page-link" href="?{% query_transform page=page|add:1 %}">Next</a>
             </li>

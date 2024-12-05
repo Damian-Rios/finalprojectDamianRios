@@ -1,8 +1,100 @@
-{% extends base.html %}
-
-{% block title %}Set Search{% endblock %}
+{% extends 'base.html' %}
+{% load custom_tags %}
 
 {% block content %}
+<div class="container mt-4">
+    <h2>{{ set.name }} - Cards</h2>
+    {% if set_cards %}
+        <div class="row">
+            {% for card in set_cards %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <!-- Hoverable image -->
+                        <img src="{{ card.images.small }}"
+                             class="card-img-top hover-image"
+                             alt="{{ card.name }}"
+                             data-bs-toggle="modal"
+                             data-bs-target="#addCardFromSetModal-{{ card.id }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ card.name }}</h5>
+                            <p class="card-text">
+                                <strong>ID:</strong> {{ card.id }}<br>
+                                <strong>Supertype:</strong> {{ card.supertype }}<br>
+                                <strong>Subtype:</strong> {{ card.subtypes|join:", " }}<br>
+                                <strong>Rarity:</strong> {{ card.rarity }}<br>
+                                <strong>Type:</strong> {{ card.types|join:", " }}<br>
+                                <strong>Number:</strong> {{ card.number }}
+                            </p>
+                            <h6>Prices:</h6>
+                            <ul>
+                                {% if card.tcgplayer %}
+                                    {% for price in card.prices %}
+                                        <li>{{ price.type|title }}: Market: ${{ price.market }}</li>
+                                    {% empty %}
+                                        <li>No price data available.</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No price data available.</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Modal for adding the card to collection -->
+                <div class="modal fade" id="addCardFromSetModal-{{ card.id }}" tabindex="-1" aria-labelledby="addCardModalLabel-{{ card.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addCardModalLabel-{{ card.id }}">Add "{{ card.name }}" to Collection</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'cards:add_card_to_collection' card.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="quantity-{{ card.id }}" class="form-label">Quantity:</label>
+                                        <input type="number" name="quantity" id="quantity-{{ card.id }}" class="form-control" min="1" value="1" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="variant-type-{{ card.id }}" class="form-label">Variant:</label>
+                                        <select name="variant-type" id="variant-type-{{ card.id }}" class="form-select" required>
+                                            {% for variant in card.variants %}
+                                                <option value="{{ variant }}">{{ variant }}</option>
+                                            {% empty %}
+                                                <option value="">No variants available</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Add to Collection</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">No cards available in this set.</p>
+    {% endif %}
 
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% query_transform page=page|add:-1 %}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link">{{ page }}</span>
+            </li>
+            {% if set_cards|length == page_size %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% query_transform page=page|add:1 %}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}

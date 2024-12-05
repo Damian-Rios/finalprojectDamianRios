@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Card Search</h1>
+    <h1 class="text-center mb-4">Card Search</h1>
 
     <!-- Search Bar -->
     <form method="get" action="{% url 'cards:card_list' %}" class="d-flex mb-3">
@@ -15,110 +15,6 @@
         <!-- Filter Button -->
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filters</button>
     </form>
-
-    <!-- Filter Modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="get" action="{% url 'cards:search_cards' %}">
-                    {% csrf_token %}
-
-                    <!-- Series Section -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeries" aria-expanded="false" aria-controls="collapseSeries">
-                        Series
-                    </button>
-                    <div class="collapse" id="collapseSeries">
-                        <div class="card card-body">
-                            <label for="series" class="form-label">Series:</label>
-                            {{ form.series }}
-                        </div>
-                    </div>
-
-                    <!-- Scarlet & Violet Sets -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSVSets" aria-expanded="false" aria-controls="collapseSVSets">
-                        Scarlet & Violet Sets
-                    </button>
-                    <div class="collapse" id="collapseSVSets">
-                        <div class="card card-body">
-                            {{ form.scarlet_violet_sets }}
-                        </div>
-                    </div>
-
-                    <!-- Supertypes -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupertypes" aria-expanded="false" aria-controls="collapseSupertypes">
-                        Supertypes
-                    </button>
-                    <div class="collapse" id="collapseSupertypes">
-                        <div class="card card-body">
-                            <label for="supertype" class="form-label">Supertype:</label>
-                            {{ form.supertype }}
-                        </div>
-                    </div>
-
-                    <!-- Subtypes with Nested Dropdowns -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubtypes" aria-expanded="false" aria-controls="collapseSubtypes">
-                        Subtypes
-                    </button>
-                    <div class="collapse" id="collapseSubtypes">
-                        <div class="card card-body">
-                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePokemonSubtypes">
-                                Pokémon Subtypes
-                            </button>
-                            <div class="collapse ps-3" id="collapsePokemonSubtypes">
-                                {{ form.pokemon_subtypes }}
-                            </div>
-
-                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTrainerSubtypes">
-                                Trainer Subtypes
-                            </button>
-                            <div class="collapse ps-3" id="collapseTrainerSubtypes">
-                                {{ form.trainer_subtypes }}
-                            </div>
-
-                            <button class="btn btn-light w-100 text-start mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEnergySubtypes">
-                                Energy Subtypes
-                            </button>
-                            <div class="collapse ps-3" id="collapseEnergySubtypes">
-                                {{ form.energy_subtypes }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Types -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTypes" aria-expanded="false" aria-controls="collapseTypes">
-                        Types
-                    </button>
-                    <div class="collapse" id="collapseTypes">
-                        <div class="card card-body">
-                            {{ form.types }}
-                        </div>
-                    </div>
-
-                    <!-- Rarity -->
-                    <button class="btn btn-secondary w-100 text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRarity" aria-expanded="false" aria-controls="collapseRarity">
-                        Rarity
-                    </button>
-                    <div class="collapse" id="collapseRarity">
-                        <div class="card card-body">
-                            <label for="common_rarities" class="form-label">Common Rarities:</label>
-                            {{ form.common_rarities }}<br>
-                            <label for="other_rarities" class="form-label">Other Rarities:</label>
-                            {{ form.other_rarities }}
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 
     <hr>
 
