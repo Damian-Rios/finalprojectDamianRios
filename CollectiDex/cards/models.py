@@ -10,7 +10,7 @@ class CardModel(models.Model):
     set = models.ForeignKey(UserSet, on_delete=models.CASCADE, related_name='cards')
     rarity = models.CharField(max_length=100, null=True, blank=True)
     type = models.TextField(null=True, blank=True)
-
+    image_url = models.URLField(max_length=200, null=True, blank=True)
     def __str__(self):
         return f"{self.name} ({self.card_id})"
 

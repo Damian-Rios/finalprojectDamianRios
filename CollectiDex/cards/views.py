@@ -14,6 +14,21 @@ from pokemontcgsdk import RestClient
 
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')
 
+def set_total(user):
+    user_sets = UserSet.objects.all()  # Get all sets
+    for user_set in user_sets:
+        total_cards = user_set.total  # Total cards in the set
+        user_cards = UserCard.objects.filter(user=user, card__set=user_set).values('card_id').distinct()
+        unique_cards_owned = user_cards.count()
+
+        # Update completion status if all cards are owned
+        if unique_cards_owned == total_cards:
+            user_set.is_completed = True
+        else:
+            user_set.is_completed = False
+        user_set.save()  # Save the updated status
+
+
 def card_variants(card):
     variants = []
     if hasattr(card, 'tcgplayer') and card.tcgplayer and hasattr(card.tcgplayer, 'prices') and card.tcgplayer.prices:
@@ -132,6 +147,7 @@ def search_cards(request):
 
 @login_required
 def add_card_to_collection(request, card_id):
+    set_total(request.user)
     """Add a card to the user's collection by fetching data from the API."""
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))  # Default to 1 if not provided
@@ -173,6 +189,7 @@ def add_card_to_collection(request, card_id):
                 'set': user_set,
                 'rarity': api_card.rarity,
                 'type': api_card.types,
+                'image_url': api_card.images.small,
             }
         )
 

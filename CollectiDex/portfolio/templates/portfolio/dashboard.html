@@ -1,95 +1,134 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Dashboard</h2>
-    <div class="row">
-        <!-- Total Cards in Collection -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Total Cards in Collection
+    <div class="container mt-5 mb-5">
+        <h2 class="text-center mb-4">Dashboard</h2>
+        <div class="row g-4">
+            <!-- Total Cards in Collection -->
+            <div class="col-lg-3 col-md-6 card-image-top">
+                <div class="card text-center shadow-sm">
+                    <a href="{% url 'portfolio:collection' %}" class="stretched-link"></a>
+                    <div class="card-header bg-primary text-white">
+                        Total Cards in Collection
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_cards }}</h5>
+                        <p class="card-text">Total number of cards in your collection.</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_cards }}</h5>
-                    <p class="card-text">Total number of cards in your collection.</p>
+            </div>
+
+            <!-- Total Value of Collection -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center shadow-sm card-image-top">
+                    <div class="card-header bg-success text-white">
+                        Total Value
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ total_value|floatformat:2 }}</h5>
+                        <p class="card-text">The current total value of your collection.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unique Cards -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center shadow-sm card-image-top">
+                    <div class="card-header bg-info text-white">
+                        Unique Cards
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ unique_cards }}</h5>
+                        <p class="card-text">Number of unique cards in your collection.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sets Completed -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center shadow-sm card-image-top">
+                    <div class="card-header bg-warning text-white">
+                        Sets Completed
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ completed_sets }}</h5>
+                        <p class="card-text">The number of sets you've completed.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total Value of Collection -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Total Value
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_value }}</h5>
-                    <p class="card-text">The current total value of your collection.</p>
+        <div class="row g-4 mt-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div
+                        class="card-header bg-secondary text-white"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#typeCollapse"
+                        aria-expanded="false"
+                        aria-controls="typeCollapse"
+                        role="button"
+                        style="cursor: pointer;">
+                        Cards Per Type
+                    </div>
+                    <div class="collapse" id="typeCollapse">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Pokemon <span class="badge text-bg-secondary">4</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Trainer <span class="badge text-bg-secondary">3</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Energy <span class="badge text-bg-secondary">2</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Unique Cards -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Unique Cards
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ unique_cards }}</h5>
-                    <p class="card-text">Number of unique cards in your collection.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sets Completed -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Sets Completed
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ completed_sets }}</h5>
-                    <p class="card-text">The number of sets you've completed.</p>
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div
+                        class="card-header bg-secondary text-white"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#rarityCollapse"
+                        aria-expanded="true"
+                        aria-controls="rarityCollapse"
+                        role="button"
+                        style="cursor: pointer;">
+                        Cards Per Rarity
+                    </div>
+                    <div class="collapse show" id="rarityCollapse">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Common <span class="badge text-bg-secondary">10</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Uncommon <span class="badge text-bg-secondary">5</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Rare <span class="badge text-bg-secondary">8</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Double Rare <span class="badge text-bg-secondary">3</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Illustration Rare <span class="badge text-bg-secondary">2</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Ultra Rare <span class="badge text-bg-secondary">1</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Special Illustration Rare <span class="badge text-bg-secondary">4</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Hyper Rare <span class="badge text-bg-secondary">6</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Cards by Rarity
-                </div>
-                <div class="card-body">
-                    <!-- <a href="{#% url 'cards:cards_by_rarity' %#}" class="btn btn-primary">View Cards by Rarity</a> -->
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    View Collection
-                </div>
-                <div class="card-body">
-                   <!-- <a href="{#% url 'cards:view_collection' %#}" class="btn btn-primary">View All Cards</a> -->
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Sets in Progress
-                </div>
-                <div class="card-body">
-                    <!-- <a href="{#% url 'sets:sets_in_progress' %#}" class="btn btn-primary">View Sets in Progress</a> -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

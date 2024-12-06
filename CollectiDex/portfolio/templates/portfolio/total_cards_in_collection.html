@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Total Cards in Collection</h2>
+    {% if user_cards %}
+        <div class="row">
+            {% for user_card in user_cards %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <!-- Display the image from the CardModel -->
+                        <img src="{{ user_card.card.image_url }}" class="card-img-top" alt="{{ user_card.card.name }}">
+                        <div class="card-body">
+                            <!-- Display card details -->
+                            <h5 class="card-title">{{ user_card.card.name }}</h5>
+                            <p class="card-text">
+                                <strong>Quantity:</strong> {{ user_card.quantity }}<br>
+                                <strong>Variant:</strong> {{ user_card.variant_type }}<br>
+                                <strong>Rarity:</strong> {{ user_card.card.rarity }}<br>
+                                <strong>Type:</strong> {{ user_card.card.type }}<br>
+                                <strong>Series:</strong> {{ user_card.card.set.series }}<br>
+                                <strong>Set:</strong> {{ user_card.card.set.name }}<br>
+                                <strong>Card ID:</strong> {{ user_card.card.card_id }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No cards found in your collection.</p>
+    {% endif %}
+</div>
+{% endblock %}
