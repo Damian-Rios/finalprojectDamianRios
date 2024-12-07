@@ -2,10 +2,11 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Total Cards in Collection</h2>
+    <h2>Cards of Type: {{ card_type }}</h2>
+
     {% if page_obj %}
         <div class="row">
-            {% for user_card in page_obj.object_list %}
+            {% for user_card in page_obj %}
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <img src="{{ user_card.card.image_url }}" class="card-img-top" alt="{{ user_card.card.name }}">
@@ -36,11 +37,13 @@
                         </a>
                     </li>
                 {% endif %}
+
                 {% for page_num in page_obj.paginator.page_range %}
                     <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
                         <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
                     </li>
                 {% endfor %}
+
                 {% if page_obj.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
@@ -51,7 +54,7 @@
             </ul>
         </nav>
     {% else %}
-        <p>No cards found in your collection.</p>
+        <p>No cards found of this type in your collection.</p>
     {% endif %}
 </div>
 {% endblock %}

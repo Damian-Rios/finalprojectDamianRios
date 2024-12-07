@@ -2,24 +2,34 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Total Cards in Collection</h2>
+    <h2>Total Sets in Collection</h2>
     {% if page_obj %}
         <div class="row">
-            {% for user_card in page_obj.object_list %}
+            {% for item in page_obj %}
                 <div class="col-md-4">
                     <div class="card mb-4">
-                        <img src="{{ user_card.card.image_url }}" class="card-img-top" alt="{{ user_card.card.name }}">
+                    <a href="{% url 'sets:set_view' item.user_set.id %}">
+                        <img src="{{ item.user_set.image_url }}" class="card-img-top img-card-custom" alt="{{ item.user_set.name }}">
+                    </a>
                         <div class="card-body">
-                            <h5 class="card-title">{{ user_card.card.name }}</h5>
+                            <h5 class="card-title">{{ item.user_set.name }}</h5>
                             <p class="card-text">
-                                <strong>Quantity:</strong> {{ user_card.quantity }}<br>
-                                <strong>Variant:</strong> {{ user_card.variant_type }}<br>
-                                <strong>Rarity:</strong> {{ user_card.card.rarity }}<br>
-                                <strong>Type:</strong> {{ user_card.card.type }}<br>
-                                <strong>Series:</strong> {{ user_card.card.set.series }}<br>
-                                <strong>Set:</strong> {{ user_card.card.set.name }}<br>
-                                <strong>Card ID:</strong> {{ user_card.card.card_id }}
+                                <strong>ID:</strong> {{ item.user_set.id }}<br>
+                                <strong>Series:</strong> {{ item.user_set.series }}<br>
+                                <strong>Printed Total:</strong> {{ item.user_set.printed_total }}<br>
+                                <strong>Total:</strong> {{ item.user_set.total }}<br>
+                                <strong>Ptcgo code:</strong> {{ item.user_set.ptcgo_code }}<br>
+                                <strong>Completion Progress:</strong> {{ item.user_cards_in_set }}/{{ item.user_set.total }}
                             </p>
+
+
+                            <!-- Progress Bar -->
+                            <div class="progress" role="progressbar" aria-label="Set completion progress"
+                                 aria-valuenow="{{ item.completion_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated overflow-visible text-dark"
+                                     style="width: {{ item.completion_percentage }}%">{{ item.completion_percentage|floatformat:0 }}%
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

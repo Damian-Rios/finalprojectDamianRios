@@ -177,6 +177,7 @@ def add_card_to_collection(request, card_id):
                 'printed_total': set_data.get('printedTotal'),
                 'total': set_data.get('total'),
                 'ptcgo_code': set_data.get('ptcgoCode'),
+                'image_url': set_data['images'].logo if set_data.get('images') else None,
             }
         )
 
@@ -187,6 +188,7 @@ def add_card_to_collection(request, card_id):
                 'name': api_card.name,
                 'series': api_card.set.series,
                 'set': user_set,
+                'supertype': api_card.supertype,
                 'rarity': api_card.rarity,
                 'type': api_card.types,
                 'image_url': api_card.images.small,

@@ -208,4 +208,10 @@ a:hover { color: var(--primary-color); }
     cursor: pointer; /* Change the cursor to indicate clickability */
 }
 
+.greyed-out {
+    filter: grayscale(100%);
+    opacity: 0.6;
+}
+
+
 

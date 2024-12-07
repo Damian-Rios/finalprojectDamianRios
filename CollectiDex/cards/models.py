@@ -8,6 +8,7 @@ class CardModel(models.Model):
     name = models.CharField(max_length=255)
     series = models.CharField(max_length=255)
     set = models.ForeignKey(UserSet, on_delete=models.CASCADE, related_name='cards')
+    supertype = models.CharField(max_length=100, blank=True, null=True)
     rarity = models.CharField(max_length=100, null=True, blank=True)
     type = models.TextField(null=True, blank=True)
     image_url = models.URLField(max_length=200, null=True, blank=True)
