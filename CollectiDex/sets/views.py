@@ -4,10 +4,11 @@ from .forms import SetFilterForm
 from cards.views import card_variants, card_prices
 from django.contrib.auth.decorators import login_required
 
+page_size = 24
+
 @login_required(login_url='users:landing')
 def set_list(request):
-    page = int(request.GET.get('page', 1))  # Default to page 1
-    page_size = 20  # Number of cards per page
+    page = int(request.GET.get('page', 1))
     form = SetFilterForm(request.GET)
 
     if form.is_valid() and 'name' in form.cleaned_data and form.cleaned_data['name']:
@@ -20,7 +21,6 @@ def set_list(request):
 
 @login_required(login_url='users:landing')
 def set_view(request, set_id):
-    page_size = 20
     page = int(request.GET.get('page', 1))
 
     set = Set.find(f'{set_id}')
@@ -42,7 +42,6 @@ def set_view(request, set_id):
 def search_sets(request):
     form = SetFilterForm(request.GET)
     sets = []
-    page_size = 20
     page = int(request.GET.get('page', 1))
 
     if form.is_valid():
