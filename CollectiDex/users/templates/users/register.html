@@ -3,18 +3,27 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="card mx-auto" style="max-width: 400px;">
-    <div class="card-body">
-        <h2 class="card-title text-center">Register</h2>
-        <form method="POST" autocomplete="off" class="mt-4">
-            {% csrf_token %}
-            {{ registerForm.as_p }}
-            <div class="d-grid">
-                <button type="submit" class="btn btn-success">Register</button>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 bg-deep-teal">
+                <div class="card-body text-soft-yellow">
+                    <h2 class="card-title text-center fw-bold">Register</h2>
+                    <form method="POST" autocomplete="off" class="mt-4">
+                        {% csrf_token %}
+                        {{ registerForm.as_p }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-soft-yellow fw-bold">Register</button>
+                        </div>
+                    </form>
+                    <hr class="border-soft-yellow">
+                    <p class="text-center">
+                        Already have an account? 
+                        <a href="{% url 'users:login' %}" class="text-soft-yellow fw-bold">Login here</a>
+                    </p>
+                </div>
             </div>
-        </form>
-        <hr>
-        <p class="text-center">Already have an account? <a href="{% url 'users:login' %}">Login here</a></p>
+        </div>
     </div>
 </div>
 {% endblock %}
