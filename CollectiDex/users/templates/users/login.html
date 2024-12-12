@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login here</h1>
+{% extends "user_base.html" %}
 
-    <form method="POST" autocomplete="off">
-        {% csrf_token %}
-        {{loginForm.as_p}}
-        <input type="submit" value="Login"/>
-    </form>
+{% block title %}Login{% endblock %}
 
-    <br>
-    <p>Don't have an account?</p>
-    <a href="{% url 'users:register' %}">Register here</a>
-</body>
-</html>
+{% block content %}
+<div class="card mx-auto" style="max-width: 400px;">
+    <div class="card-body">
+        <h2 class="card-title text-center">Login</h2>
+        <form method="POST" autocomplete="off" class="mt-4">
+            {% csrf_token %}
+            {{ loginForm.as_p }}
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+        <hr>
+        <p class="text-center">Don't have an account? <a href="{% url 'users:register' %}">Register here</a></p>
+    </div>
+</div>
+{% endblock %}

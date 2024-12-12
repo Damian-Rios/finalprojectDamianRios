@@ -2,8 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from pokemontcgsdk import Card, RestClient
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from urllib3 import request
-
 from .forms import CardFilterForm
 from .models import UserCard, CardModel
 from sets.models import UserSet  # Import the UserSet model
@@ -27,7 +25,6 @@ def set_total(user):
         else:
             user_set.is_completed = False
         user_set.save()  # Save the updated status
-
 
 def card_variants(card):
     variants = []
@@ -53,7 +50,7 @@ def card_prices(card):
                 })
     return prices
 
-
+@login_required(login_url='users:landing')
 def card_list(request):
     """ Display all Pokémon cards by default (with pagination) """
     page = int(request.GET.get('page', 1))  # Default to page 1
@@ -72,7 +69,7 @@ def card_list(request):
 
     return render(request, 'cards/card_list.html', {'form': form, 'cards': cards, 'page': page, 'page_size': page_size})
 
-
+@login_required(login_url='users:landing')
 def search_cards(request):
     form = CardFilterForm(request.GET)
     cards = []
@@ -144,8 +141,7 @@ def search_cards(request):
 
     return render(request, 'cards/card_list.html', {'form': form, 'cards': cards, 'page': page, 'page_size': page_size})
 
-
-@login_required
+@@login_required(login_url='users:landing')
 def add_card_to_collection(request, card_id):
     set_total(request.user)
     """Add a card to the user's collection by fetching data from the API."""
@@ -180,6 +176,32 @@ def add_card_to_collection(request, card_id):
                 'image_url': set_data['images'].logo if set_data.get('images') else None,
             }
         )
+
+
+
+        """
+        Things to finish for project
+        1. fix card layout grids
+        2. fix style colors
+        3. fix pagination for pages
+        3. STYLE USER PAGES - LOGIN AND REGISTER
+        4. finish landing page
+        5. add to admin view?
+        5. make sure unlogged in users cant access site until logging in
+        6. go over code and clean up / remove redundant
+        7. add comments
+        8. go over rubric
+        
+        If have time:
+        1. add filters to collection views
+        2. figure out image overlay - IF HAVE TIME
+        """
+
+
+
+
+
+
 
         # Create or get the card in the database
         card, created = CardModel.objects.get_or_create(

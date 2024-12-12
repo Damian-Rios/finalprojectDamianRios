@@ -1,9 +1,10 @@
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from pokemontcgsdk import Set, Card
 from .forms import SetFilterForm
 from cards.views import card_variants, card_prices
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='users:landing')
 def set_list(request):
     page = int(request.GET.get('page', 1))  # Default to page 1
     page_size = 20  # Number of cards per page
@@ -17,7 +18,7 @@ def set_list(request):
 
     return render(request, 'sets/set_list.html', {'form':form, 'sets': sets, 'page': page, 'page_size': page_size})
 
-
+@login_required(login_url='users:landing')
 def set_view(request, set_id):
     page_size = 20
     page = int(request.GET.get('page', 1))
@@ -37,6 +38,7 @@ def set_view(request, set_id):
 
     return render(request, 'sets/set_view.html', {'set': set, 'set_cards': set_cards, 'page': page, 'page_size': page_size})
 
+@login_required(login_url='users:landing')
 def search_sets(request):
     form = SetFilterForm(request.GET)
     sets = []

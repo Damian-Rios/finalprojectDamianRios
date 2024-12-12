@@ -4,16 +4,16 @@ from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 
-# add to dashboard view when created
-# will need to add @login_required(login_url='login')
-# from django.contrib.auth.decorators import login_required
-
-
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
         return redirect(reverse('portfolio:dashboard'))
     return render(request, 'users/index.html')
+
+def landing(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('portfolio:dashboard'))
+    return render(request, 'users/landing_page.html')
 
 
 def register_view(request):

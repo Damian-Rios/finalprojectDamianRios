@@ -7,6 +7,33 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count, F
 
+def get_market_price(card_id, variant_type):
+    # Define a cache key for the card and variant type
+    cache_key = f"card_{card_id}_variant_{variant_type}_price"
+
+    # Try to get the price from the cache
+    cached_price = cache.get(cache_key)
+    if cached_price:
+        return cached_price  # If cached, return the cached price
+
+    # If not in cache, fetch the price from the API
+    try:
+        card_info = Card.find(card_id)
+        if not card_info or not hasattr(card_info, 'tcgplayer') or not card_info.tcgplayer.prices:
+            return 0  # If no data, return 0
+
+        price_info = getattr(card_info.tcgplayer.prices, variant_type, None)
+        market_price = price_info.market if price_info else 0
+
+        # Cache the price for future requests, with a shorter expiry time (e.g., 15 minutes)
+        cache.set(cache_key, market_price, timeout=45 * 60)  # Cache for 15 minutes
+
+        return market_price
+    except Exception as e:
+        print(f"Error fetching market price: {e}")
+        return 0  # Return 0 in case of an error
+
+@login_required(login_url='users:landing')
 def cards_by_type(request, card_type):
     # Fetch the user's cards from the UserCard model
     user_cards = UserCard.objects.filter(user=request.user, card__supertype=card_type)
@@ -22,6 +49,7 @@ def cards_by_type(request, card_type):
     })
 
 # Cards by rarity view
+@login_required(login_url='users:landing')
 def cards_by_rarity(request, rarity):
     # Fetch the user's cards from the UserCard model
     user_cards = UserCard.objects.filter(user=request.user, card__rarity=rarity)
@@ -36,6 +64,7 @@ def cards_by_rarity(request, rarity):
         'rarity': rarity
     })
 
+@login_required(login_url='users:landing')
 def cards_in_collection(request):
     user_cards = UserCard.objects.filter(user=request.user)
     paginator = Paginator(user_cards, 10)
@@ -44,6 +73,7 @@ def cards_in_collection(request):
 
     return render(request, 'portfolio/total_cards_in_collection.html', {'page_obj': page_obj})
 
+@login_required(login_url='users:landing')
 def sets_in_collection(request):
     user_sets = UserSet.objects.filter(cards__usercard__user=request.user).distinct()
 
@@ -74,35 +104,7 @@ def sets_in_collection(request):
 
     return render(request, 'portfolio/total_sets_in_collection.html', {'page_obj': page_obj})
 
-
-def get_market_price(card_id, variant_type):
-    # Define a cache key for the card and variant type
-    cache_key = f"card_{card_id}_variant_{variant_type}_price"
-
-    # Try to get the price from the cache
-    cached_price = cache.get(cache_key)
-    if cached_price:
-        return cached_price  # If cached, return the cached price
-
-    # If not in cache, fetch the price from the API
-    try:
-        card_info = Card.find(card_id)
-        if not card_info or not hasattr(card_info, 'tcgplayer') or not card_info.tcgplayer.prices:
-            return 0  # If no data, return 0
-
-        price_info = getattr(card_info.tcgplayer.prices, variant_type, None)
-        market_price = price_info.market if price_info else 0
-
-        # Cache the price for future requests, with a shorter expiry time (e.g., 15 minutes)
-        cache.set(cache_key, market_price, timeout=45 * 60)  # Cache for 15 minutes
-
-        return market_price
-    except Exception as e:
-        print(f"Error fetching market price: {e}")
-        return 0  # Return 0 in case of an error
-
-
-@login_required
+@login_required(login_url='users:landing')
 def dashboard(request):
     user = request.user
 
