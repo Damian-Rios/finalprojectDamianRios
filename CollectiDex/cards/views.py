@@ -12,6 +12,8 @@ from pokemontcgsdk import RestClient
 
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')
 
+page_size = 24
+
 def set_total(user):
     user_sets = UserSet.objects.all()  # Get all sets
     for user_set in user_sets:
@@ -53,8 +55,7 @@ def card_prices(card):
 @login_required(login_url='users:landing')
 def card_list(request):
     """ Display all Pokémon cards by default (with pagination) """
-    page = int(request.GET.get('page', 1))  # Default to page 1
-    page_size = 20  # Number of cards per page
+    page = int(request.GET.get('page', 1))
     form = CardFilterForm(request.GET)
 
     if form.is_valid() and 'name' in form.cleaned_data and form.cleaned_data['name']:
@@ -73,7 +74,6 @@ def card_list(request):
 def search_cards(request):
     form = CardFilterForm(request.GET)
     cards = []
-    page_size = 20
     page = int(request.GET.get('page', 1))
 
     if form.is_valid():
@@ -141,7 +141,7 @@ def search_cards(request):
 
     return render(request, 'cards/card_list.html', {'form': form, 'cards': cards, 'page': page, 'page_size': page_size})
 
-@@login_required(login_url='users:landing')
+@login_required(login_url='users:landing')
 def add_card_to_collection(request, card_id):
     set_total(request.user)
     """Add a card to the user's collection by fetching data from the API."""
@@ -180,14 +180,8 @@ def add_card_to_collection(request, card_id):
 
 
         """
-        Things to finish for project
-        1. fix card layout grids
-        2. fix style colors
-        3. fix pagination for pages
         3. STYLE USER PAGES - LOGIN AND REGISTER
-        4. finish landing page
         5. add to admin view?
-        5. make sure unlogged in users cant access site until logging in
         6. go over code and clean up / remove redundant
         7. add comments
         8. go over rubric
