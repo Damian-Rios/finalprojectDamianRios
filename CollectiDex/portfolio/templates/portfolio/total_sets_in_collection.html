@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Total Sets in Collection</h2>
+    <h2 class="text-center mb-4">Total Sets in Collection</h2>
     {% if page_obj %}
         <div class="row">
             {% for item in page_obj %}
-                <div class="col-md-4">
-                    <div class="card mb-4">
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <div class="card h-100 shadow-md">
                     <a href="{% url 'sets:set_view' item.user_set.id %}">
                         <img src="{{ item.user_set.image_url }}" class="card-img-top img-card-custom" alt="{{ item.user_set.name }}">
                     </a>
