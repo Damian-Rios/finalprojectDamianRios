@@ -24,51 +24,50 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link text-soft-yellow" href="#!">Login</a></li>
-                        <li class="nav-item"><a class="nav-link text-soft-yellow" href="#!">Sign Up</a></li>
+                        <li class="nav-item"><a class="nav-link text-soft-yellow" href="{% url 'users:login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link text-soft-yellow" href="{% url 'users:signup' %}">Sign Up</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <!-- Header - set the background image for the header in the line below -->
-        <header class="py-5 bg-image-full bg-vibrant-orange" style="background-image: url('https://source.unsplash.com/wfh8dDlNFOk/1600x900')">
+        <!-- Header -->
+        <header class="py-5 bg-image-full bg-vibrant-orange">
             <div class="text-center my-5">
-                <img class="img-fluid rounded-circle mb-4" src="https://dummyimage.com/150x150/6c757d/dee2e6.jpg" alt="Sample image placeholder" />
-                <h1 class="text-soft-yellow fs-3 fw-bolder">Full Width Pics</h1>
-                <p class="text-soft-yellow-50 mb-0">Landing Page Template</p>
+                <h1 class="text-soft-yellow fs-3 fw-bolder">Welcome to CollectiDex</h1>
+                <p class="text-soft-yellow-50 mb-0">Your Ultimate Card Collection Tracker</p>
             </div>
         </header>
-        <!-- Content section -->
+        <!-- Features section -->
         <section class="py-5">
             <div class="container my-5">
                 <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <h2 class="text-deep-teal">Full Width Backgrounds</h2>
-                        <p class="lead text-deep-teal">A single, lightweight helper class allows you to add engaging, full-width background images to sections of your page.</p>
-                        <p class="mb-0 text-deep-teal">The universe is almost 14 billion years old, and, wow! Life had no problem starting here on Earth! I think it would be inexcusably egocentric of us to suggest that we're alone in the universe.</p>
+                    <div class="col-lg-8 text-center">
+                        <h2 class="text-deep-teal">Why Use CollectiDex?</h2>
+                        <p class="lead text-deep-teal">CollectiDex makes managing your collection easy and exciting!</p>
+                        <ul class="text-deep-teal list-unstyled">
+                            <li><strong>Build Your Collection:</strong> Add cards to your personal collection effortlessly.</li>
+                            <li><strong>Track Your Progress:</strong> Monitor which cards or sets you’ve completed and which ones are still missing.</li>
+                            <li><strong>Stay Updated:</strong> Get up-to-date market price information for your cards.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- Image element -->
-        <div class="py-5 bg-image-full bg-cool-blue" style="background-image: url('https://source.unsplash.com/4ulffa6qoKA/1200x800')">
-            <div style="height: 20rem"></div>
-        </div>
         <!-- Content section -->
         <section class="py-5">
             <div class="container my-5">
                 <div class="row justify-content-center">
                     <div class="col-lg-6">
-                        <h2 class="text-deep-teal">Engaging Background Images</h2>
-                        <p class="lead text-deep-teal">The background images used in this template are sourced from Unsplash and are open source and free to use.</p>
-                        <p class="mb-0 text-deep-teal">I can't tell you how many people say they were turned off from science because of a science teacher that completely sucked out all the inspiration and enthusiasm they had for the course.</p>
+                        <h2 class="text-deep-teal">Discover the World of Card Collecting</h2>
+                        <p class="lead text-deep-teal">Whether you're a seasoned collector or just getting started, CollectiDex has the tools you need to succeed.</p>
+                        <p class="mb-0 text-deep-teal">Start exploring today and take your collecting journey to the next level!</p>
                     </div>
                 </div>
             </div>
         </section>
         <!-- Footer -->
         <footer class="py-5 bg-deep-teal">
-            <div class="container"><p class="m-0 text-center text-soft-yellow">Copyright &copy; Your Website 2023</p></div>
+            <div class="container"><p class="m-0 text-center text-soft-yellow">CollectiDex 2024</p></div>
         </footer>
         <!-- Bootstrap core JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
