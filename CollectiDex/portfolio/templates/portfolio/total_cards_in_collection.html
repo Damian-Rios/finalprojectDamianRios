@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Total Cards in Collection</h2>
+    <h2 class="text-center mb-4">Total Cards in Collection</h2>
     {% if page_obj %}
         <div class="row">
             {% for user_card in page_obj.object_list %}
-                <div class="col-md-4">
-                    <div class="card mb-4">
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <div class="card h-100 shadow-md">
                         <img src="{{ user_card.card.image_url }}" class="card-img-top" alt="{{ user_card.card.name }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ user_card.card.name }}</h5>
