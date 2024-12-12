@@ -5,10 +5,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 
 # Create your views here.
+"""
 def index(request):
     if request.user.is_authenticated:
         return redirect(reverse('portfolio:dashboard'))
     return render(request, 'users/index.html')
+"""
 
 def landing(request):
     if request.user.is_authenticated:
