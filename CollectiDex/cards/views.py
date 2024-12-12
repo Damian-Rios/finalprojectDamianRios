@@ -12,14 +12,6 @@ from pokemontcgsdk import RestClient
 
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')
 
-"""
-3. STYLE USER PAGES - LOGIN AND REGISTER
-5. add to admin view?
-6. go over code and clean up / remove redundant
-7. add comments
-8. go over rubric
-"""
-
 page_size = 24
 
 def set_total(user):
