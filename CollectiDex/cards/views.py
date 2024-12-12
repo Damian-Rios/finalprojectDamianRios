@@ -12,6 +12,14 @@ from pokemontcgsdk import RestClient
 
 RestClient.configure('f89e3fab-3136-4936-971b-c171d0f4782d')
 
+"""
+3. STYLE USER PAGES - LOGIN AND REGISTER
+5. add to admin view?
+6. go over code and clean up / remove redundant
+7. add comments
+8. go over rubric
+"""
+
 page_size = 24
 
 def set_total(user):
@@ -176,26 +184,6 @@ def add_card_to_collection(request, card_id):
                 'image_url': set_data['images'].logo if set_data.get('images') else None,
             }
         )
-
-
-
-        """
-        3. STYLE USER PAGES - LOGIN AND REGISTER
-        5. add to admin view?
-        6. go over code and clean up / remove redundant
-        7. add comments
-        8. go over rubric
-        
-        If have time:
-        1. add filters to collection views
-        2. figure out image overlay - IF HAVE TIME
-        """
-
-
-
-
-
-
 
         # Create or get the card in the database
         card, created = CardModel.objects.get_or_create(
